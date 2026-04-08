@@ -1,11 +1,9 @@
-import React from "react";
-
-interface TafsirContentProps {
+interface FormatContentProps {
   content: string;
   author: string;
 }
 
-export function TafsirContent({ content, author }: TafsirContentProps) {
+export const FormatContent = ({ content, author }: FormatContentProps) => {
   const renderText = (text: string) => {
     return text.split(/(\*\*.*?\*\*|\*.*?\*)/).map((part, i) => {
       if (part.startsWith("**") && part.endsWith("**")) {
@@ -15,6 +13,7 @@ export function TafsirContent({ content, author }: TafsirContentProps) {
           </strong>
         );
       }
+
       if (part.startsWith("*") && part.endsWith("*")) {
         return (
           <em key={i} className="italic text-on-surface-variant">
@@ -22,6 +21,7 @@ export function TafsirContent({ content, author }: TafsirContentProps) {
           </em>
         );
       }
+
       return part;
     });
   };
@@ -38,6 +38,7 @@ export function TafsirContent({ content, author }: TafsirContentProps) {
           .filter((p) => p.trim() !== "")
           .map((para, idx) => {
             const isNumbered = /^\d+[\.\)]/.test(para);
+
             return (
               <p
                 key={idx}
@@ -50,4 +51,4 @@ export function TafsirContent({ content, author }: TafsirContentProps) {
       </div>
     </div>
   );
-}
+};

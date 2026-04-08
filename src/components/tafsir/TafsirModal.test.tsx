@@ -19,7 +19,6 @@ describe('TafsirModal SSR', () => {
       ayah: 1,
       arabic: 'بِسْمِ اللَّهِ',
       translation: 'Dengan menyebut nama Allah',
-      source: 'ibn-kathir'
     });
 
     render(jsx);
