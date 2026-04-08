@@ -70,13 +70,8 @@ export function TafsirModal() {
             </button>
           </div>
 
-          <div className="mb-8 md:mb-12">
-            <div className="text-body-sm text-on-surface-variant uppercase tracking-widest mb-2 font-bold">
-              Surah : Ayah
-            </div>
-            <div className="text-display-lg font-bold text-on-surface leading-none">
-              {tafsirVerse.surah} : {tafsirVerse.ayah}
-            </div>
+          <div className="mb-4 md:mb-8 text-body-sm text-on-surface-variant font-medium">
+            Verse {tafsirVerse.surah}:{tafsirVerse.ayah}
           </div>
 
           <div className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scrollbar-hide">
@@ -99,28 +94,60 @@ export function TafsirModal() {
         </div>
 
         <div className="flex-1 flex flex-col overflow-hidden bg-surface-bright/50">
-          <div className="hidden md:flex justify-end p-4 shrink-0 border-b border-outline-variant/15">
-            <button
-              onClick={closeTafsir}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-colors"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+          <div className="hidden md:flex flex-col shrink-0 border-b border-outline-variant/15 p-2 md:p-4 bg-surface-container/30">
+            <div className="flex justify-between items-start">
+              <div>
+                <h2 className="text-title-lg font-bold text-on-surface">
+                  Surah {tafsirVerse.surah}, Ayah {tafsirVerse.ayah}
+                </h2>
+                <p className="text-body-sm text-on-surface-variant mt-1">
+                  Quranic Verse • Meaning and Reflection
+                </p>
+              </div>
+              <button
+                onClick={closeTafsir}
+                className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors"
+                aria-label="Close"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
 
           <div className="flex-1 overflow-y-auto p-6 md:p-12">
+            {(tafsirVerse.arabic || tafsirVerse.translation) && (
+              <div className="glass rounded-2xl p-6 border border-outline-variant/20 mb-10">
+                {tafsirVerse.arabic && (
+                  <p
+                    className="text-headline-sm md:text-headline-md font-arabic text-on-surface leading-[2.5] text-center"
+                    dir="rtl"
+                  >
+                    {tafsirVerse.arabic}
+                  </p>
+                )}
+                {tafsirVerse.arabic && tafsirVerse.translation && (
+                  <div className="w-16 h-px bg-outline-variant/30 mx-auto my-6" />
+                )}
+                {tafsirVerse.translation && (
+                  <p className="text-body-md text-on-surface-variant italic">
+                    "{tafsirVerse.translation}"
+                  </p>
+                )}
+              </div>
+            )}
+
             {loading ? (
               <div className="h-full flex flex-col items-center justify-center gap-6 text-on-surface-variant">
                 <div className="w-10 h-10 rounded-full border-4 border-surface-container-highest border-t-primary animate-spin" />

@@ -24,6 +24,8 @@ export default async function SurahPage({
       fetchIndonesianTranslation(surahId),
     ]);
 
+    console.log(surahData);
+
     return (
       <div className="flex flex-col">
         <SurahHeader

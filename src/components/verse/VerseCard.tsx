@@ -33,7 +33,7 @@ export function VerseCard({ surahNo, ayahNo, arabic, english, indonesian }: Vers
         
         <div className="flex flex-wrap gap-6 border-t border-outline-variant/15 pt-4">
           <button 
-            onClick={(e) => { e.stopPropagation(); openTafsir(surahNo, ayahNo); }}
+            onClick={(e) => { e.stopPropagation(); openTafsir(surahNo, ayahNo, arabic, indonesian); }}
             className="text-label-sm font-bold tracking-[0.05em] text-primary hover:text-primary-container transition-colors uppercase"
           >
             Tafsir
