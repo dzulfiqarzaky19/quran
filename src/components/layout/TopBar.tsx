@@ -1,5 +1,6 @@
 import Link from 'next/link';
 import { SearchInput } from '../ui/SearchInput';
+import { Suspense } from 'react';
 
 export function TopBar() {
   return (
@@ -9,7 +10,9 @@ export function TopBar() {
           AL-QURAN
         </Link>
         <div className="flex-1 flex justify-center">
-          <SearchInput placeholder="Search Surah..." />
+          <Suspense fallback={<div className="relative w-full max-w-md h-[46px] bg-surface-container-highest rounded-xl animate-pulse" />}>
+            <SearchInput placeholder="Search Surah..." />
+          </Suspense>
         </div>
         <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant cursor-pointer hover:bg-surface-container-high transition-colors">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
