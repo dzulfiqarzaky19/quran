@@ -9,10 +9,10 @@ export const Header = ({ surah, ayah }: IHeaderProps) => {
   const router = useRouter();
 
   return (
-    <div className="hidden md:flex flex-col shrink-0 border-b border-outline-variant/15 p-4 bg-surface-container/30">
+    <div className="flex flex-col shrink-0 border-b border-outline-variant/15 p-4 md:px-6 bg-surface-container/30">
       <div className="flex justify-between items-start">
         <div>
-          <h2 className="text-title-lg font-bold text-on-surface">
+          <h2 className="text-body-sm text-on-surface-variant">
             Surah {surah}, Ayah {ayah}
           </h2>
           <p className="text-body-sm text-on-surface-variant mt-1">

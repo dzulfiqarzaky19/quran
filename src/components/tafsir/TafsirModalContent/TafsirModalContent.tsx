@@ -50,18 +50,19 @@ export const TafsirModalContent = ({
   }, [activeAuthor]);
 
   return (
-    <div className="flex flex-col md:flex-row h-full overflow-hidden">
-      <Sidebar
-        surahNo={data.surahNo}
-        ayahNo={ayah}
-        activeAuthor={activeAuthor}
-        onAuthorChange={handleAuthorChange}
-      />
+    <div className="flex flex-col h-full overflow-hidden">
+      <Header surah={surah} ayah={ayah} />
+      
+      <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
+        <Sidebar
+          surahNo={data.surahNo}
+          ayahNo={ayah}
+          activeAuthor={activeAuthor}
+          onAuthorChange={handleAuthorChange}
+        />
 
-      <div className="flex-1 flex flex-col h-full overflow-hidden bg-surface-bright/50">
-        <Header surah={surah} ayah={ayah} />
-
-        <div className="flex-1 overflow-y-auto scroll-smooth custom-scrollbar">
+        <div className="flex-1 flex flex-col h-full overflow-hidden bg-surface-bright/50">
+          <div className="flex-1 overflow-y-auto scroll-smooth custom-scrollbar">
           <div className="p-6 md:p-12 max-w-4xl mx-auto w-full">
             {(arabic || translation) && (
               <div className="glass rounded-2xl p-6 md:p-8 border border-outline-variant/20 mb-12">
@@ -100,5 +101,6 @@ export const TafsirModalContent = ({
         </div>
       </div>
     </div>
-  );
+  </div>
+);
 };
