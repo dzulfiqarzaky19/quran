@@ -38,7 +38,7 @@ export function TafsirModal() {
     ) || data?.tafsirs[0];
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-0 md:p-6">
+    <div className="fixed inset-0 z-100 flex items-center justify-center p-0 md:p-6">
       <div
         className="absolute inset-0 bg-surface-dim/80 backdrop-blur-sm"
         onClick={closeTafsir}
@@ -47,7 +47,7 @@ export function TafsirModal() {
       <div className="relative w-full h-full md:h-auto md:max-w-5xl md:max-h-[90vh] glass md:rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-2xl">
         <div className="w-full md:w-72 bg-surface-container/80 p-6 flex flex-col border-r border-outline-variant/15 shrink-0">
           <div className="flex justify-between flex-row-reverse md:flex-row items-center mb-8">
-            <h3 className="text-label-sm tracking-[0.1em] text-primary font-bold uppercase">
+            <h3 className="text-label-sm tracking-widest text-primary font-bold uppercase">
               Deep Study
             </h3>
             <button
