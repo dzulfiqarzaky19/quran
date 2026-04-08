@@ -4,7 +4,7 @@ interface SurahNavigationProps {
   surahNo: number;
 }
 
-export function SurahNavigation({ surahNo }: SurahNavigationProps) {
+export const SurahNavigation = ({ surahNo }: SurahNavigationProps) => {
   const prevSurah = surahNo > 1 ? surahNo - 1 : null;
   const nextSurah = surahNo < 114 ? surahNo + 1 : null;
 
@@ -67,4 +67,4 @@ export function SurahNavigation({ surahNo }: SurahNavigationProps) {
       )}
     </div>
   );
-}
+};

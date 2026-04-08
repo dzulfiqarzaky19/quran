@@ -1,5 +1,5 @@
-import { fetchSurahList } from '@/lib/api';
-import { SurahList } from '@/components/surah/SurahList';
+import { fetchSurahList } from "@/lib/api";
+import { SurahList } from "@/components/surah/SurahList";
 
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -7,20 +7,20 @@ interface PageProps {
 
 export default async function Home(props: PageProps) {
   const searchParams = await props.searchParams;
-  const q = typeof searchParams.q === 'string' ? searchParams.q : '';
-  
+  const q = typeof searchParams.q === "string" ? searchParams.q : "";
+
   const rawSurahs = await fetchSurahList();
   const surahs = rawSurahs.map((s, idx) => ({ ...s, surahNo: idx + 1 }));
-  
-  let filteredSurahs = surahs;
-  if (q) {
+
+  const filteredSurahs = surahs.filter((s) => {
+    if (!q) return true;
     const lower = q.toLowerCase();
-    filteredSurahs = surahs.filter(s => 
-      s.surahName.toLowerCase().includes(lower) || 
+    return (
+      s.surahName.toLowerCase().includes(lower) ||
       s.surahNameTranslation.toLowerCase().includes(lower) ||
       s.surahNo.toString() === lower
     );
-  }
+  });
 
   return (
     <div className="flex flex-col">
@@ -32,7 +32,7 @@ export default async function Home(props: PageProps) {
           A high-precision editorial reading experience.
         </p>
       </div>
-      
+
       <SurahList surahs={filteredSurahs} searchQuery={q} />
     </div>
   );

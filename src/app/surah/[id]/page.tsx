@@ -1,4 +1,3 @@
-import { fetchSurah, fetchIndonesianTranslation } from "@/lib/api";
 import { SurahHeader } from "@/components/surah/SurahHeader";
 import { SurahNavigation } from "@/components/surah/SurahNavigation";
 import { VerseList } from "@/components/verse/VerseList";
@@ -24,34 +23,11 @@ export default async function SurahPage({
     notFound();
   }
 
-  const tafsirAyahStr = resolvedSearchParams.tafsir;
-  const targetAyah =
-    typeof tafsirAyahStr === "string" ? parseInt(tafsirAyahStr, 10) : null;
-
-  const [surahData, indonesianTexts] = await Promise.all([
-    fetchSurah(surahId),
-    fetchIndonesianTranslation(surahId),
-  ]);
-
-  let tafsirArabic = "";
-  let tafsirTranslation = "";
-
-  if (targetAyah && targetAyah >= 1 && targetAyah <= surahData.totalAyah) {
-    const idx = targetAyah - 1;
-    tafsirArabic = surahData.arabic1[idx];
-    tafsirTranslation = indonesianTexts[idx];
-  }
+  const targetAyah = Number(resolvedSearchParams.tafsir) || 0;
 
   return (
     <div className="flex flex-col">
-      <SurahHeader
-        surahNo={surahId}
-        surahName={surahData.surahName}
-        surahNameArabic={surahData.surahNameArabicLong}
-        surahNameTranslation={surahData.surahNameTranslation}
-        totalAyah={surahData.totalAyah}
-        revelationPlace={surahData.revelationPlace}
-      />
+      <SurahHeader surahNo={surahId} />
 
       <div className="mb-4 text-center">
         <div className="h-1 w-full max-w-2xl mx-auto rounded-full bg-surface-container overflow-hidden">
@@ -63,24 +39,12 @@ export default async function SurahPage({
       </div>
 
       <div className="mt-8">
-        <VerseList
-          surahNo={surahId}
-          arabicVars={surahData.arabic1}
-          englishVars={surahData.english}
-          indonesianVars={indonesianTexts}
-        />
+        <VerseList surahNo={surahId} />
       </div>
 
       <SurahNavigation surahNo={surahId} />
 
-      {targetAyah && (
-        <TafsirModal
-          surah={surahId}
-          ayah={targetAyah}
-          arabic={tafsirArabic}
-          translation={tafsirTranslation}
-        />
-      )}
+      {targetAyah && <TafsirModal surah={surahId} ayah={targetAyah} />}
     </div>
   );
 }

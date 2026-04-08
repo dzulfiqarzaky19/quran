@@ -1,20 +1,26 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { TafsirFetcher } from "./TafsirFetcher";
+import { fetchSurah, fetchIndonesianTranslation } from "@/lib/api";
 
 interface TafsirModalProps {
   surah: number;
   ayah: number;
-  arabic: string;
-  translation: string;
 }
 
-export const TafsirModal = ({
+export const TafsirModal = async ({
   surah,
   ayah,
-  arabic,
-  translation,
-}: TafsirModalProps) => (
+}: TafsirModalProps) => {
+  const [surahData, indonesianTexts] = await Promise.all([
+    fetchSurah(surah),
+    fetchIndonesianTranslation(surah),
+  ]);
+
+  const arabic = surahData.arabic1[ayah - 1] || "";
+  const translation = indonesianTexts[ayah - 1] || "";
+
+  return (
   <div className="fixed inset-0 z-100 flex items-center justify-center p-0 md:p-6">
     <Link
       href="?"
@@ -43,4 +49,5 @@ export const TafsirModal = ({
       </div>
     </div>
   </div>
-);
+  );
+};

@@ -1,11 +1,11 @@
-import { SurahCard, SurahWithNo } from './SurahCard';
+import { SurahCard, SurahWithNo } from "./SurahCard";
 
 interface SurahListProps {
   surahs: SurahWithNo[];
   searchQuery?: string;
 }
 
-export function SurahList({ surahs, searchQuery }: SurahListProps) {
+export const SurahList = ({ surahs, searchQuery }: SurahListProps) => {
   if (surahs.length === 0) {
     return (
       <div className="py-20 text-center text-on-surface-variant h-full flex flex-col justify-center">
@@ -21,4 +21,4 @@ export function SurahList({ surahs, searchQuery }: SurahListProps) {
       ))}
     </div>
   );
-}
+};
