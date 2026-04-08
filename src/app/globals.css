@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+:root {
+  /* Surface Hierarchy */
+  --surface-dim: #131315;
+  --surface: #131315;
+  --surface-container-lowest: #191A1C;
+  --surface-container-low: #1B1B1D;
+  --surface-container: #1F1F21;
+  --surface-container-high: #2A2A2C;
+  --surface-container-highest: #353437;
+  --surface-bright: #3A3A3E;
+
+  /* Accents */
+  --primary: #C2C1FF;
+  --primary-container: #5E5CE6;
+  --secondary-container: #464554;
+
+  /* Text */
+  --on-surface: #E6E1E5;
+  --on-surface-variant: #CAC4D0;
+
+  /* Borders / Outlines */
+  --outline-variant: #464554;
+}
+
+@theme inline {
+  --color-surface-dim: var(--surface-dim);
+  --color-surface: var(--surface);
+  --color-surface-container-lowest: var(--surface-container-lowest);
+  --color-surface-container-low: var(--surface-container-low);
+  --color-surface-container: var(--surface-container);
+  --color-surface-container-high: var(--surface-container-high);
+  --color-surface-container-highest: var(--surface-container-highest);
+  --color-surface-bright: var(--surface-bright);
+
+  --color-primary: var(--primary);
+  --color-primary-container: var(--primary-container);
+  --color-secondary-container: var(--secondary-container);
+
+  --color-on-surface: var(--on-surface);
+  --color-on-surface-variant: var(--on-surface-variant);
+  --color-outline-variant: var(--outline-variant);
+
+  --font-sans: var(--font-inter);
+  --font-arabic: var(--font-amiri);
+  
+  /* Font size overrides from design system */
+  --text-label-sm: 0.6875rem; 
+  --text-label-sm--line-height: calc(1 / 0.6875);
+  --text-body-sm: 0.875rem;
+  --text-body-sm--line-height: 1.4;
+  --text-body-lg: 1rem;
+  --text-body-lg--line-height: 1.6;
+  --text-title-lg: 1.375rem;
+  --text-title-lg--line-height: 1.6;
+  --text-display-lg: 3.5rem;
+  --text-display-lg--line-height: 1.1;
+  --text-display-lg--letter-spacing: -0.02em;
+}
+
+body {
+  background: var(--surface-dim);
+  color: var(--on-surface);
+}
+
+@utility glass {
+  background: color-mix(in srgb, var(--surface-bright) 60%, transparent);
+  backdrop-filter: blur(20px);
+}
