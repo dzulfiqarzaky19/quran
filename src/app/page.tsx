@@ -1,11 +1,26 @@
 import { fetchSurahList } from '@/lib/api';
-import { SurahListClient } from '@/components/surah/SurahListClient';
+import { SurahList } from '@/components/surah/SurahList';
 
-export const revalidate = 86400; // Cache for 24 hours
+interface PageProps {
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
+}
 
-export default async function Home() {
+export default async function Home(props: PageProps) {
+  const searchParams = await props.searchParams;
+  const q = typeof searchParams.q === 'string' ? searchParams.q : '';
+  
   const rawSurahs = await fetchSurahList();
   const surahs = rawSurahs.map((s, idx) => ({ ...s, surahNo: idx + 1 }));
+  
+  let filteredSurahs = surahs;
+  if (q) {
+    const lower = q.toLowerCase();
+    filteredSurahs = surahs.filter(s => 
+      s.surahName.toLowerCase().includes(lower) || 
+      s.surahNameTranslation.toLowerCase().includes(lower) ||
+      s.surahNo.toString() === lower
+    );
+  }
 
   return (
     <div className="flex flex-col">
@@ -18,7 +33,7 @@ export default async function Home() {
         </p>
       </div>
       
-      <SurahListClient surahs={surahs} />
+      <SurahList surahs={filteredSurahs} searchQuery={q} />
     </div>
   );
 }

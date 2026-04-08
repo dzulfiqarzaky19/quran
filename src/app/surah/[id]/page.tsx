@@ -2,27 +2,44 @@ import { fetchSurah, fetchIndonesianTranslation } from "@/lib/api";
 import { SurahHeader } from "@/components/surah/SurahHeader";
 import { SurahNavigation } from "@/components/surah/SurahNavigation";
 import { VerseList } from "@/components/verse/VerseList";
+import { TafsirModal } from "@/components/tafsir/TafsirModal";
 import { notFound } from "next/navigation";
 
 export const revalidate = 86400; // Cache for 24 hours
 
 export default async function SurahPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ id: string }>;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }) {
   const resolvedParams = await params;
+  const resolvedSearchParams = await searchParams;
   const surahId = parseInt(resolvedParams.id, 10);
 
   if (isNaN(surahId) || surahId < 1 || surahId > 114) {
     notFound();
   }
 
+  const tafsirAyahStr = resolvedSearchParams.tafsir;
+  const tafsirSource = resolvedSearchParams.source || 'ibn-kathir';
+  const targetAyah = typeof tafsirAyahStr === 'string' ? parseInt(tafsirAyahStr, 10) : null;
+
   try {
     const [surahData, indonesianTexts] = await Promise.all([
       fetchSurah(surahId),
       fetchIndonesianTranslation(surahId),
     ]);
+
+    let tafsirArabic = '';
+    let tafsirTranslation = '';
+
+    if (targetAyah && targetAyah >= 1 && targetAyah <= surahData.totalAyah) {
+      const idx = targetAyah - 1;
+      tafsirArabic = surahData.arabic1[idx];
+      tafsirTranslation = indonesianTexts[idx];
+    }
 
     return (
       <div className="flex flex-col">
@@ -54,6 +71,16 @@ export default async function SurahPage({
         </div>
 
         <SurahNavigation surahNo={surahId} />
+
+        {targetAyah && (
+          <TafsirModal
+            surah={surahId}
+            ayah={targetAyah}
+            arabic={tafsirArabic}
+            translation={tafsirTranslation}
+            source={tafsirSource as string}
+          />
+        )}
       </div>
     );
   } catch (error) {
@@ -61,3 +88,4 @@ export default async function SurahPage({
     notFound();
   }
 }
+

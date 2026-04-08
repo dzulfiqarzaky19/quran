@@ -1,6 +1,8 @@
 'use client';
 import { useAppStore } from '@/store';
 
+import Link from 'next/link';
+
 interface VerseCardProps {
   surahNo: number;
   ayahNo: number;
@@ -10,7 +12,7 @@ interface VerseCardProps {
 }
 
 export function VerseCard({ surahNo, ayahNo, arabic, english, indonesian }: VerseCardProps) {
-  const { activeVerse, setActiveVerse, openTafsir } = useAppStore();
+  const { activeVerse, setActiveVerse } = useAppStore();
   const isActive = activeVerse === ayahNo;
 
   return (
@@ -32,12 +34,14 @@ export function VerseCard({ surahNo, ayahNo, arabic, english, indonesian }: Vers
         <p className="text-body-sm text-on-surface-variant italic mb-8">{indonesian}</p>
         
         <div className="flex flex-wrap gap-6 border-t border-outline-variant/15 pt-4">
-          <button 
-            onClick={(e) => { e.stopPropagation(); openTafsir(surahNo, ayahNo, arabic, indonesian); }}
+          <Link
+            href={`?tafsir=${ayahNo}`}
+            scroll={false}
+            onClick={(e) => e.stopPropagation()}
             className="text-label-sm font-bold tracking-[0.05em] text-primary hover:text-primary-container transition-colors uppercase"
           >
             Tafsir
-          </button>
+          </Link>
           <button className="text-label-sm font-bold tracking-[0.05em] text-on-surface-variant hover:text-on-surface transition-colors uppercase">
             Pelajaran
           </button>

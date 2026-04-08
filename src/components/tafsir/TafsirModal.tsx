@@ -1,48 +1,45 @@
-"use client";
-import { useAppStore } from "@/store";
-import { useEffect, useState } from "react";
 import { fetchTafsir } from "@/lib/api";
-import { TafsirResponse } from "@/lib/types";
 import { TafsirContent } from "./TafsirContent";
+import Link from "next/link";
 
-export function TafsirModal() {
-  const {
-    tafsirOpen,
-    tafsirVerse,
-    closeTafsir,
-    tafsirSource,
-    setTafsirSource,
-  } = useAppStore();
-  const [data, setData] = useState<TafsirResponse | null>(null);
-  const [loading, setLoading] = useState(false);
+interface TafsirModalProps {
+  surah: number;
+  ayah: number;
+  arabic: string;
+  translation: string;
+  source: string;
+}
 
-  useEffect(() => {
-    if (tafsirOpen && tafsirVerse) {
-      setLoading(true);
-      fetchTafsir(tafsirVerse.surah, tafsirVerse.ayah)
-        .then((res) => setData(res))
-        .catch(console.error)
-        .finally(() => setLoading(false));
-    } else {
-      setData(null);
-    }
-  }, [tafsirOpen, tafsirVerse]);
-
-  if (!tafsirOpen || !tafsirVerse) return null;
+export async function TafsirModal({
+  surah,
+  ayah,
+  arabic,
+  translation,
+  source,
+}: TafsirModalProps) {
+  let data = null;
+  try {
+    data = await fetchTafsir(surah, ayah);
+  } catch (err) {
+    console.error(err);
+  }
 
   const currentTafsir =
     data?.tafsirs.find(
-      (t) => t.author.toLowerCase().replace(/\s+/g, "-") === tafsirSource,
+      (t) => t.author.toLowerCase().replace(/\s+/g, "-") === source,
     ) || data?.tafsirs[0];
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center p-0 md:p-6">
-      <div
+      <Link
+        href="?"
+        scroll={false}
+        replace
         className="absolute inset-0 bg-surface-dim/80 backdrop-blur-sm"
-        onClick={closeTafsir}
+        aria-label="Close modal"
       />
 
-      <div className="relative w-full h-full md:h-auto md:max-w-5xl md:max-h-[90vh] glass md:rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-2xl">
+      <div className="relative w-full h-full md:h-auto md:max-w-5xl md:max-h-[90vh] glass md:rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-2xl pointer-events-auto">
         <div className="w-full md:w-72 bg-surface-container/80 p-6 flex flex-col border-r border-outline-variant/15 shrink-0">
           <div className="flex justify-between flex-row-reverse md:flex-row items-center">
             <h3 className="text-label-sm tracking-widest text-primary font-bold uppercase">
@@ -51,22 +48,24 @@ export function TafsirModal() {
           </div>
 
           <div className="mb-4 md:mb-8 text-body-sm text-on-surface-variant mt-1">
-            Verse {tafsirVerse.surah}:{tafsirVerse.ayah}
+            Verse {surah}:{ayah}
           </div>
 
           <div className="flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-4 md:pb-0 scrollbar-hide">
             {["Ibn Kathir", "Maarif Ul Quran", "Tazkirul Quran"].map(
-              (source) => {
-                const sourceKey = source.toLowerCase().replace(/\s+/g, "-");
-                const isActive = tafsirSource === sourceKey;
+              (srcName) => {
+                const sourceKey = srcName.toLowerCase().replace(/\s+/g, "-");
+                const isActive = source === sourceKey;
                 return (
-                  <button
+                  <Link
                     key={sourceKey}
-                    onClick={() => setTafsirSource(sourceKey)}
+                    href={`?tafsir=${ayah}&source=${sourceKey}`}
+                    scroll={false}
+                    replace
                     className={`text-left px-5 py-4 text-label-sm font-bold tracking-[0.05em] uppercase rounded-xl transition-all whitespace-nowrap md:whitespace-normal ${isActive ? "bg-primary/10 text-primary" : "text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface"}`}
                   >
-                    {source}
-                  </button>
+                    {srcName}
+                  </Link>
                 );
               },
             )}
@@ -78,14 +77,16 @@ export function TafsirModal() {
             <div className="flex justify-between items-start">
               <div>
                 <h2 className="text-title-lg font-bold text-on-surface">
-                  Surah {tafsirVerse.surah}, Ayah {tafsirVerse.ayah}
+                  Surah {surah}, Ayah {ayah}
                 </h2>
                 <p className="text-body-sm text-on-surface-variant mt-1">
                   Quranic Verse • Meaning and Reflection
                 </p>
               </div>
-              <button
-                onClick={closeTafsir}
+              <Link
+                href="?"
+                scroll={false}
+                replace
                 className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-surface-container-high text-on-surface-variant transition-colors"
                 aria-label="Close"
               >
@@ -102,40 +103,33 @@ export function TafsirModal() {
                     d="M6 18L18 6M6 6l12 12"
                   />
                 </svg>
-              </button>
+              </Link>
             </div>
           </div>
 
           <div className="flex-1 overflow-y-auto p-6 md:p-12">
-            {(tafsirVerse.arabic || tafsirVerse.translation) && (
+            {(arabic || translation) && (
               <div className="glass rounded-2xl p-6 border border-outline-variant/20 mb-10">
-                {tafsirVerse.arabic && (
+                {arabic && (
                   <p
                     className="text-headline-sm md:text-headline-md font-arabic text-on-surface leading-[2.5] text-center"
                     dir="rtl"
                   >
-                    {tafsirVerse.arabic}
+                    {arabic}
                   </p>
                 )}
-                {tafsirVerse.arabic && tafsirVerse.translation && (
+                {arabic && translation && (
                   <div className="w-16 h-px bg-outline-variant/30 mx-auto my-6" />
                 )}
-                {tafsirVerse.translation && (
+                {translation && (
                   <p className="text-body-md text-on-surface-variant italic">
-                    "{tafsirVerse.translation}"
+                    "{translation}"
                   </p>
                 )}
               </div>
             )}
 
-            {loading ? (
-              <div className="h-full flex flex-col items-center justify-center gap-6 text-on-surface-variant">
-                <div className="w-10 h-10 rounded-full border-4 border-surface-container-highest border-t-primary animate-spin" />
-                <p className="text-label-sm uppercase tracking-widest font-bold">
-                  Loading Tafsir...
-                </p>
-              </div>
-            ) : data && currentTafsir ? (
+            {data && currentTafsir ? (
               <div className="animate-in fade-in duration-300">
                 <TafsirContent
                   content={currentTafsir.content}
@@ -154,7 +148,7 @@ export function TafsirModal() {
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={1.5}
-                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477-4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
                   />
                 </svg>
                 Tafsir narrative not available for this verse.

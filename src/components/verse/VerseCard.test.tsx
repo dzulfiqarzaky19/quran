@@ -5,7 +5,6 @@ jest.mock('@/store', () => ({
   useAppStore: () => ({
     activeVerse: null,
     setActiveVerse: jest.fn(),
-    openTafsir: jest.fn(),
   })
 }));
 
