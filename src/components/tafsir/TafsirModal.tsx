@@ -16,8 +16,6 @@ export function TafsirModal() {
   const [data, setData] = useState<TafsirResponse | null>(null);
   const [loading, setLoading] = useState(false);
 
-  console.log(tafsirVerse);
-
   useEffect(() => {
     if (tafsirOpen && tafsirVerse) {
       setLoading(true);
@@ -46,31 +44,13 @@ export function TafsirModal() {
 
       <div className="relative w-full h-full md:h-auto md:max-w-5xl md:max-h-[90vh] glass md:rounded-3xl overflow-hidden flex flex-col md:flex-row shadow-2xl">
         <div className="w-full md:w-72 bg-surface-container/80 p-6 flex flex-col border-r border-outline-variant/15 shrink-0">
-          <div className="flex justify-between flex-row-reverse md:flex-row items-center mb-8">
+          <div className="flex justify-between flex-row-reverse md:flex-row items-center">
             <h3 className="text-label-sm tracking-widest text-primary font-bold uppercase">
               Deep Study
             </h3>
-            <button
-              onClick={closeTafsir}
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-container hover:bg-surface-container-high text-on-surface-variant md:hidden transition-colors"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
           </div>
 
-          <div className="mb-4 md:mb-8 text-body-sm text-on-surface-variant font-medium">
+          <div className="mb-4 md:mb-8 text-body-sm text-on-surface-variant mt-1">
             Verse {tafsirVerse.surah}:{tafsirVerse.ayah}
           </div>
 
