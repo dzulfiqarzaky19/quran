@@ -20,6 +20,8 @@ interface AppState {
   setActiveAudioWord: (word: number | null) => void;
   audioData: ChapterAudioResponse | null;
   setAudioData: (data: ChapterAudioResponse | null) => void;
+  tajweedData: string[] | null;
+  setTajweedData: (data: string[] | null) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -41,4 +43,6 @@ export const useAppStore = create<AppState>((set) => ({
   setActiveAudioWord: (word) => set({ activeAudioWord: word }),
   audioData: null,
   setAudioData: (data) => set({ audioData: data }),
+  tajweedData: null,
+  setTajweedData: (data) => set({ tajweedData: data }),
 }));

@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "@/store";
-import { fetchAudioSegments } from "@/lib/api";
+import { fetchAudioSegments, fetchSurahTajweed } from "@/lib/api";
+import { useAudioSync } from "@/hooks/useAudioSync";
+import { useShallow } from "zustand/react/shallow";
 
 interface AudioPlayerProps {
   surahNo: number;
@@ -10,7 +12,6 @@ interface AudioPlayerProps {
 
 export function AudioPlayer({ surahNo }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const [localTime, setLocalTime] = useState(0);
   const [isLoaded, setIsLoaded] = useState(false);
 
   // Global state for slow-updating elements
@@ -23,28 +24,49 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
     setIsPlaying,
     setDuration,
     setPlaybackRate,
-    setActiveAudioAyah,
-    setActiveAudioWord,
     setAudioData,
     setActiveAudioSurah,
-  } = useAppStore();
+    setTajweedData,
+  } = useAppStore(
+    useShallow((state) => ({
+      isPlaying: state.isPlaying,
+      duration: state.duration,
+      playbackRate: state.playbackRate,
+      activeAudioAyah: state.activeAudioAyah,
+      audioData: state.audioData,
+      setIsPlaying: state.setIsPlaying,
+      setDuration: state.setDuration,
+      setPlaybackRate: state.setPlaybackRate,
+      setAudioData: state.setAudioData,
+      setActiveAudioSurah: state.setActiveAudioSurah,
+      setTajweedData: state.setTajweedData,
+    })),
+  );
 
-  // Load audio metadata
+  const { localTime, onTimeUpdate, handleSeek, jumpToAyah } = useAudioSync(
+    audioRef,
+    audioData,
+  );
+
+  // Load audio metadata and Tajweed data
   useEffect(() => {
-    async function loadAudio() {
+    async function loadResources() {
       try {
-        const data = await fetchAudioSegments(surahNo);
-        setAudioData(data);
+        const [audio, tajweed] = await Promise.all([
+          fetchAudioSegments(surahNo),
+          fetchSurahTajweed(surahNo),
+        ]);
+        setAudioData(audio);
+        setTajweedData(tajweed);
         setActiveAudioSurah(surahNo);
         setIsLoaded(true);
       } catch (error) {
-        console.error("Failed to load audio segments:", error);
+        console.error("Failed to load resources:", error);
       }
     }
-    loadAudio();
-  }, [surahNo, setAudioData, setActiveAudioSurah]);
+    loadResources();
+  }, [surahNo, setAudioData, setTajweedData, setActiveAudioSurah]);
 
-  // Handle Audio Properties Sync (Playback State & Speed)
   useEffect(() => {
     if (!audioRef.current || !isLoaded) return;
 
@@ -57,22 +79,6 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
     }
   }, [isPlaying, isLoaded, playbackRate]);
 
-  // 3. Listen for external seeks (from VerseCard)
-  useEffect(() => {
-    const handleSeekEvent = (e: CustomEvent) => {
-      if (audioRef.current) {
-        audioRef.current.currentTime = e.detail;
-        setLocalTime(e.detail);
-      }
-    };
-    document.addEventListener("audio-seek", handleSeekEvent as EventListener);
-    return () =>
-      document.removeEventListener(
-        "audio-seek",
-        handleSeekEvent as EventListener,
-      );
-  }, []);
-
   // Auto-scroll to active ayah
   useEffect(() => {
     if (activeAudioAyah && isPlaying) {
@@ -83,95 +89,22 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
     }
   }, [activeAudioAyah, isPlaying]);
 
-  const lastVerseIndex = useRef(0);
-  const lastSegmentIndex = useRef(0);
-
-  const onTimeUpdate = () => {
-    if (!audioRef.current || !audioData) return;
-
-    const currentTime = audioRef.current.currentTime;
-    setLocalTime(currentTime); // Local update only!
-
-    const timeMs = currentTime * 1000;
-    const timestamps = audioData.audio_file.timestamps;
-
-    let foundAyah = null;
-    let foundWord = null;
-
-    let vIndex = lastVerseIndex.current;
-    if (timeMs < (timestamps[vIndex]?.timestamp_from || 0) - 1000) vIndex = 0;
-
-    for (let i = vIndex; i < timestamps.length; i++) {
-      const ts = timestamps[i];
-      if (timeMs >= ts.timestamp_from && timeMs <= ts.timestamp_to) {
-        lastVerseIndex.current = i;
-        foundAyah = parseInt(ts.verse_key.split(":")[1]);
-
-        if (ts.segments?.length) {
-          let sIndex = i === vIndex ? lastSegmentIndex.current : 0;
-          if (timeMs < (ts.segments[sIndex]?.[1] || 0)) sIndex = 0;
-
-          for (let j = sIndex; j < ts.segments.length; j++) {
-            const [wordIndex, start, end] = ts.segments[j];
-            if (timeMs >= start && timeMs <= end) {
-              lastSegmentIndex.current = j;
-              foundWord = wordIndex;
-              break;
-            }
-          }
-        }
-        break;
-      }
-    }
-
-    if (foundAyah !== useAppStore.getState().activeAudioAyah) {
-      setActiveAudioAyah(foundAyah);
-    }
-    if (foundWord !== useAppStore.getState().activeAudioWord) {
-      setActiveAudioWord(foundWord);
-    }
-  };
-
   const onLoadedMetadata = () => {
     if (audioRef.current) {
       setDuration(audioRef.current.duration);
     }
   };
 
-  const handleSeek = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const time = parseFloat(e.target.value);
-    if (audioRef.current) {
-      audioRef.current.currentTime = time;
-      setLocalTime(time);
-    }
-  };
-
   const handleNext = () => {
-    if (!audioData || !activeAudioAyah || !audioRef.current) return;
-    const nextAyah = activeAudioAyah + 1;
-    const timestamp = audioData.audio_file.timestamps.find(
-      (ts) => ts.verse_key === `${surahNo}:${nextAyah}`,
-    );
-    if (timestamp) {
-      const time = timestamp.timestamp_from / 1000;
-      audioRef.current.currentTime = time;
-      setLocalTime(time);
-      setIsPlaying(true);
-    }
+    if (!activeAudioAyah) return;
+    const success = jumpToAyah(activeAudioAyah + 1, surahNo);
+    if (success) setIsPlaying(true);
   };
 
   const handlePrev = () => {
-    if (!audioData || !activeAudioAyah || !audioRef.current) return;
-    const prevAyah = activeAudioAyah - 1;
-    const timestamp = audioData.audio_file.timestamps.find(
-      (ts) => ts.verse_key === `${surahNo}:${prevAyah}`,
-    );
-    if (timestamp) {
-      const time = timestamp.timestamp_from / 1000;
-      audioRef.current.currentTime = time;
-      setLocalTime(time);
-      setIsPlaying(true);
-    }
+    if (!activeAudioAyah) return;
+    const success = jumpToAyah(activeAudioAyah - 1, surahNo);
+    if (success) setIsPlaying(true);
   };
 
   const togglePlay = () => setIsPlaying(!isPlaying);
@@ -187,7 +120,6 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 md:pb-6 pointer-events-none">
       <div className="max-w-4xl mx-auto glass rounded-3xl p-4 md:p-6 shadow-2xl border border-outline-variant/20 pointer-events-auto flex flex-col gap-4">
-        {/* Progress Bar */}
         <div className="flex items-center gap-4">
           <span className="text-label-sm text-on-surface-variant w-10">
             {formatTime(localTime)}
@@ -206,7 +138,6 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
           </span>
         </div>
 
-        {/* Controls */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 md:gap-4">
             <button

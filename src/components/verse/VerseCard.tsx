@@ -3,6 +3,8 @@ import { useAppStore } from "@/store";
 import { useShallow } from "zustand/react/shallow";
 import Link from "next/link";
 import { memo } from "react";
+import { ArabicWord } from "./ArabicWord";
+import { getTajweedWords } from "@/utils/tajweed";
 
 interface VerseCardProps {
   surahNo: number;
@@ -19,7 +21,7 @@ export const VerseCard = memo(function Verse({
   english,
   indonesian,
 }: VerseCardProps) {
-  const { isReading, isPlayingAyah, isPlaying, activeAudioWord } = useAppStore(
+  const { isReading, isPlayingAyah, isPlaying, activeAudioWord, tajweedData } = useAppStore(
     useShallow((state) => {
       const isThisAyah = state.activeAudioAyah === ayahNo;
 
@@ -28,6 +30,7 @@ export const VerseCard = memo(function Verse({
         isPlayingAyah: isThisAyah,
         isPlaying: isThisAyah ? state.isPlaying : false,
         activeAudioWord: isThisAyah ? state.activeAudioWord : null,
+        tajweedData: state.tajweedData,
       };
     }),
   );
@@ -55,8 +58,9 @@ export const VerseCard = memo(function Verse({
     }
   };
 
-  const words = arabic.split(" ");
-  const stopMarksRegex = /^[\u0615\u06D6-\u06DC\u06E2\u06E8]$/;
+  // Use Tajweed text if available, otherwise fallback to plain Arabic
+  const displayText = tajweedData ? tajweedData[ayahNo - 1] : arabic;
+  const tajweedWords = getTajweedWords(displayText);
   let realWordCounter = 0;
 
   return (
@@ -92,27 +96,17 @@ export const VerseCard = memo(function Verse({
 
         <div className="flex-1 text-right" dir="rtl">
           <p className="text-title-lg font-arabic text-on-surface leading-[2.8] flex flex-wrap justify-start gap-x-2 gap-y-1">
-            {words.map((word, idx) => {
-              const isStopMark = stopMarksRegex.test(word);
-              if (!isStopMark) realWordCounter++;
-
-              const wordId = isStopMark ? null : realWordCounter;
-              const isHighlighted =
-                !isStopMark && isPlayingAyah && activeAudioWord === wordId;
-
+            {tajweedWords.map((wordObj, idx) => {
+              if (!wordObj.isStopMark) realWordCounter++;
+              const wordId = wordObj.isStopMark ? null : realWordCounter;
+              
               return (
-                <span
+                <ArabicWord
                   key={idx}
-                  className={`transition-all duration-200 rounded-md px-1 ${
-                    isHighlighted
-                      ? "bg-primary text-surface scale-110 shadow-lg shadow-primary/20"
-                      : isStopMark
-                        ? "text-on-surface-variant/60 text-[0.8em]"
-                        : ""
-                  }`}
-                >
-                  {word}
-                </span>
+                  segments={wordObj.segments}
+                  isStopMark={wordObj.isStopMark}
+                  isHighlighted={!wordObj.isStopMark && isPlayingAyah && activeAudioWord === wordId}
+                />
               );
             })}
           </p>

@@ -33,3 +33,10 @@ export async function fetchAudioSegments(surahNo: number, reciterId: number = 7)
   if (!res.ok) throw new Error(`Failed to fetch audio segments for surah ${surahNo}`);
   return res.json();
 }
+
+export async function fetchSurahTajweed(surahNo: number): Promise<string[]> {
+  const res = await fetch(`https://api.alquran.cloud/v1/surah/${surahNo}/quran-tajweed`);
+  if (!res.ok) throw new Error(`Failed to fetch Tajweed data for surah ${surahNo}`);
+  const json = await res.json();
+  return json.data.ayahs.map((ayah: { text: string }) => ayah.text);
+}
