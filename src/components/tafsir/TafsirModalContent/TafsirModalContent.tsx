@@ -47,12 +47,12 @@ export const TafsirModalContent = ({
         (t) => t.author.toLowerCase().replace(/\s+/g, "-") === activeAuthor,
       ) || data.tafsirs[0]
     );
-  }, [activeAuthor]);
+  }, [activeAuthor, data.tafsirs]);
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <Header surah={surah} ayah={ayah} />
-      
+
       <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
         <Sidebar
           surahNo={data.surahNo}
@@ -63,44 +63,44 @@ export const TafsirModalContent = ({
 
         <div className="flex-1 flex flex-col h-full overflow-hidden bg-surface-bright/50">
           <div className="flex-1 overflow-y-auto scroll-smooth custom-scrollbar">
-          <div className="p-6 md:p-12 max-w-4xl mx-auto w-full">
-            {(arabic || translation) && (
-              <div className="glass rounded-2xl p-6 md:p-8 border border-outline-variant/20 mb-12">
-                {arabic && (
-                  <p
-                    className="text-headline-sm md:text-headline-md font-arabic text-on-surface leading-loose text-center mb-6"
-                    dir="rtl"
-                  >
-                    {arabic}
-                  </p>
-                )}
-
-                {translation && (
-                  <div className="pt-6 border-t border-outline-variant/10">
-                    <p className="text-body-lg text-on-surface-variant italic text-center leading-relaxed">
-                      "{translation}"
+            <div className="p-6 md:p-12 max-w-4xl mx-auto w-full">
+              {(arabic || translation) && (
+                <div className="glass rounded-2xl p-6 md:p-8 border border-outline-variant/20 mb-12">
+                  {arabic && (
+                    <p
+                      className="text-headline-sm md:text-headline-md font-arabic text-on-surface leading-loose text-center mb-6"
+                      dir="rtl"
+                    >
+                      {arabic}
                     </p>
-                  </div>
-                )}
-              </div>
-            )}
+                  )}
 
-            {currentTafsir ? (
-              <Suspense fallback={isPending ? <div>Loading...</div> : null}>
-                <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-                  <FormatContent
-                    content={currentTafsir.content}
-                    author={currentTafsir.author}
-                  />
+                  {translation && (
+                    <div className="pt-6 border-t border-outline-variant/10">
+                      <p className="text-body-lg text-on-surface-variant italic text-center leading-relaxed">
+                        aaaa{translation}
+                      </p>
+                    </div>
+                  )}
                 </div>
-              </Suspense>
-            ) : (
-              <NotFound />
-            )}
+              )}
+
+              {currentTafsir ? (
+                <Suspense fallback={isPending ? <div>Loading...</div> : null}>
+                  <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+                    <FormatContent
+                      content={currentTafsir.content}
+                      author={currentTafsir.author}
+                    />
+                  </div>
+                </Suspense>
+              ) : (
+                <NotFound />
+              )}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  </div>
-);
+  );
 };

@@ -50,3 +50,21 @@ export interface IndonesianSurahResponse {
     ayahs: IndonesianAyah[];
   };
 }
+
+export type AudioSegment = [number, number, number];
+
+export interface VerseTimestamp {
+  verse_key: string;
+  timestamp_from: number;
+  timestamp_to: number;
+  segments: AudioSegment[];
+}
+
+export interface ChapterAudioResponse {
+  audio_file: {
+    id: number;
+    chapter_id: number;
+    audio_url: string;
+    timestamps: VerseTimestamp[];
+  };
+}

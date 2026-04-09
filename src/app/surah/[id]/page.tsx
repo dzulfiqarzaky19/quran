@@ -3,6 +3,7 @@ import { SurahNavigation } from "@/components/surah/SurahNavigation";
 import { VerseList } from "@/components/verse/VerseList";
 import { TafsirModal } from "@/components/tafsir/TafsirModal";
 import { notFound } from "next/navigation";
+import { AudioPlayer } from "@/components/audio/AudioPlayer";
 
 export const revalidate = 86400; // Cache for 24 hours
 
@@ -10,6 +11,7 @@ interface ISurahPageProps {
   params: Promise<{ id: string }>;
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
+
 
 export default async function SurahPage({
   params,
@@ -38,13 +40,15 @@ export default async function SurahPage({
         </div>
       </div>
 
-      <div className="mt-8">
+      <div className="mt-8 mb-32">
         <VerseList surahNo={surahId} />
       </div>
 
       <SurahNavigation surahNo={surahId} />
 
       {targetAyah && <TafsirModal surah={surahId} ayah={targetAyah} />}
+
+      <AudioPlayer surahNo={surahId} />
     </div>
   );
 }

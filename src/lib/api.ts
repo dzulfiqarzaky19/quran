@@ -1,4 +1,4 @@
-import { Surah, SurahDetail, TafsirResponse, IndonesianSurahResponse } from './types';
+import { Surah, SurahDetail, TafsirResponse, IndonesianSurahResponse, ChapterAudioResponse } from './types';
 
 const PRIMARY_API = 'https://quranapi.pages.dev/api';
 const SECONDARY_API = 'https://api.alquran.cloud/v1';
@@ -26,4 +26,10 @@ export async function fetchIndonesianTranslation(surahNo: number): Promise<strin
   if (!res.ok) throw new Error(`Failed to fetch Indonesian translation for surah ${surahNo}`);
   const json: IndonesianSurahResponse = await res.json();
   return json.data.ayahs.map(ayah => ayah.text);
+}
+
+export async function fetchAudioSegments(surahNo: number, reciterId: number = 7): Promise<ChapterAudioResponse> {
+  const res = await fetch(`https://api.quran.com/api/v4/chapter_recitations/${reciterId}/${surahNo}?segments=true`);
+  if (!res.ok) throw new Error(`Failed to fetch audio segments for surah ${surahNo}`);
+  return res.json();
 }
