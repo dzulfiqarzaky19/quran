@@ -1,6 +1,8 @@
 "use client";
 import { useAppStore } from "@/store";
+import { useShallow } from "zustand/react/shallow";
 import Link from "next/link";
+import { memo } from "react";
 
 interface VerseCardProps {
   surahNo: number;
@@ -10,26 +12,29 @@ interface VerseCardProps {
   indonesian: string;
 }
 
-export function VerseCard({
+export const VerseCard = memo(function Verse({
   surahNo,
   ayahNo,
   arabic,
   english,
   indonesian,
 }: VerseCardProps) {
-  const {
-    activeVerse,
-    setActiveVerse,
-    isPlaying,
-    setIsPlaying,
-    activeAudioAyah,
-    activeAudioWord,
-    audioData,
-    setCurrentTime,
-  } = useAppStore();
+  const { isReading, isPlayingAyah, isPlaying, activeAudioWord } = useAppStore(
+    useShallow((state) => {
+      const isThisAyah = state.activeAudioAyah === ayahNo;
 
-  const isReading = activeVerse === ayahNo;
-  const isPlayingAyah = activeAudioAyah === ayahNo;
+      return {
+        isReading: state.activeVerse === ayahNo,
+        isPlayingAyah: isThisAyah,
+        isPlaying: isThisAyah ? state.isPlaying : false,
+        activeAudioWord: isThisAyah ? state.activeAudioWord : null,
+      };
+    }),
+  );
+
+  const audioData = useAppStore((state) => state.audioData);
+  const setActiveVerse = useAppStore((state) => state.setActiveVerse);
+  const setIsPlaying = useAppStore((state) => state.setIsPlaying);
 
   const handlePlayFromHere = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -38,15 +43,21 @@ export function VerseCard({
     const timestamp = audioData.audio_file.timestamps.find(
       (ts) => ts.verse_key === `${surahNo}:${ayahNo}`,
     );
-    
+
     if (timestamp) {
-      setCurrentTime(timestamp.timestamp_from / 1000);
+      document.dispatchEvent(
+        new CustomEvent("audio-seek", {
+          detail: timestamp.timestamp_from / 1000,
+        }),
+      );
       setIsPlaying(true);
       setActiveVerse(ayahNo);
     }
   };
 
   const words = arabic.split(" ");
+  const stopMarksRegex = /^[\u0615\u06D6-\u06DC\u06E2\u06E8]$/;
+  let realWordCounter = 0;
 
   return (
     <div
@@ -82,12 +93,23 @@ export function VerseCard({
         <div className="flex-1 text-right" dir="rtl">
           <p className="text-title-lg font-arabic text-on-surface leading-[2.8] flex flex-wrap justify-start gap-x-2 gap-y-1">
             {words.map((word, idx) => {
-              const wordId = idx + 1;
-              const isHighlighted = isPlayingAyah && activeAudioWord === wordId;
+              const isStopMark = stopMarksRegex.test(word);
+              if (!isStopMark) realWordCounter++;
+
+              const wordId = isStopMark ? null : realWordCounter;
+              const isHighlighted =
+                !isStopMark && isPlayingAyah && activeAudioWord === wordId;
+
               return (
                 <span
                   key={idx}
-                  className={`transition-all duration-200 rounded-md px-1 ${isHighlighted ? "bg-primary text-surface scale-110 shadow-lg shadow-primary/20" : ""}`}
+                  className={`transition-all duration-200 rounded-md px-1 ${
+                    isHighlighted
+                      ? "bg-primary text-surface scale-110 shadow-lg shadow-primary/20"
+                      : isStopMark
+                        ? "text-on-surface-variant/60 text-[0.8em]"
+                        : ""
+                  }`}
                 >
                   {word}
                 </span>
@@ -126,4 +148,4 @@ export function VerseCard({
       </div>
     </div>
   );
-}
+});

@@ -8,8 +8,6 @@ interface AppState {
   // Audio State
   isPlaying: boolean;
   setIsPlaying: (playing: boolean) => void;
-  currentTime: number;
-  setCurrentTime: (time: number) => void;
   duration: number;
   setDuration: (duration: number) => void;
   playbackRate: number;
@@ -31,8 +29,6 @@ export const useAppStore = create<AppState>((set) => ({
   // Audio Defaults
   isPlaying: false,
   setIsPlaying: (playing) => set({ isPlaying: playing }),
-  currentTime: 0,
-  setCurrentTime: (time) => set({ currentTime: time }),
   duration: 0,
   setDuration: (duration) => set({ duration: duration }),
   playbackRate: 1,
