@@ -2,7 +2,7 @@
 import { useAppStore } from "@/store";
 import { useShallow } from "zustand/react/shallow";
 import Link from "next/link";
-import { memo } from "react";
+import { memo, useMemo } from "react";
 import { ArabicWord } from "./ArabicWord";
 import { getTajweedWords } from "@/utils/tajweed";
 
@@ -21,19 +21,20 @@ export const VerseCard = memo(function Verse({
   english,
   indonesian,
 }: VerseCardProps) {
-  const { isReading, isPlayingAyah, isPlaying, activeAudioWord, tajweedData } = useAppStore(
-    useShallow((state) => {
-      const isThisAyah = state.activeAudioAyah === ayahNo;
+  const { isReading, isPlayingAyah, isPlaying, activeAudioWord, tajweedData } =
+    useAppStore(
+      useShallow((state) => {
+        const isThisAyah = state.activeAudioAyah === ayahNo;
 
-      return {
-        isReading: state.activeVerse === ayahNo,
-        isPlayingAyah: isThisAyah,
-        isPlaying: isThisAyah ? state.isPlaying : false,
-        activeAudioWord: isThisAyah ? state.activeAudioWord : null,
-        tajweedData: state.tajweedData,
-      };
-    }),
-  );
+        return {
+          isReading: state.activeVerse === ayahNo,
+          isPlayingAyah: isThisAyah,
+          isPlaying: isThisAyah ? state.isPlaying : false,
+          activeAudioWord: isThisAyah ? state.activeAudioWord : null,
+          tajweedData: state.tajweedData,
+        };
+      }),
+    );
 
   const audioData = useAppStore((state) => state.audioData);
   const setActiveVerse = useAppStore((state) => state.setActiveVerse);
@@ -59,8 +60,21 @@ export const VerseCard = memo(function Verse({
   };
 
   // Use Tajweed text if available, otherwise fallback to plain Arabic
-  const displayText = tajweedData ? tajweedData[ayahNo - 1] : arabic;
-  const tajweedWords = getTajweedWords(displayText);
+  const tajweedWords = useMemo(() => {
+    const displayText = tajweedData ? tajweedData[ayahNo - 1] : arabic;
+    const words = getTajweedWords(displayText);
+
+    // Assign real word IDs here so we don't calculate them during render
+    let counter = 0;
+    return words.map((word) => {
+      if (!word.isStopMark) counter++;
+      return {
+        ...word,
+        wordId: word.isStopMark ? null : counter,
+      };
+    });
+  }, [tajweedData, arabic, ayahNo]);
+
   let realWordCounter = 0;
 
   return (
@@ -99,13 +113,17 @@ export const VerseCard = memo(function Verse({
             {tajweedWords.map((wordObj, idx) => {
               if (!wordObj.isStopMark) realWordCounter++;
               const wordId = wordObj.isStopMark ? null : realWordCounter;
-              
+
               return (
                 <ArabicWord
                   key={idx}
                   segments={wordObj.segments}
                   isStopMark={wordObj.isStopMark}
-                  isHighlighted={!wordObj.isStopMark && isPlayingAyah && activeAudioWord === wordId}
+                  isHighlighted={
+                    !wordObj.isStopMark &&
+                    isPlayingAyah &&
+                    activeAudioWord === wordId
+                  }
                 />
               );
             })}
