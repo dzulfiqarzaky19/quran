@@ -59,12 +59,10 @@ export const VerseCard = memo(function Verse({
     }
   };
 
-  // Use Tajweed text if available, otherwise fallback to plain Arabic
   const tajweedWords = useMemo(() => {
     const displayText = tajweedData ? tajweedData[ayahNo - 1] : arabic;
     const words = getTajweedWords(displayText);
 
-    // Assign real word IDs here so we don't calculate them during render
     let counter = 0;
     return words.map((word) => {
       if (!word.isStopMark) counter++;
@@ -74,8 +72,6 @@ export const VerseCard = memo(function Verse({
       };
     });
   }, [tajweedData, arabic, ayahNo]);
-
-  let realWordCounter = 0;
 
   return (
     <div
@@ -110,23 +106,18 @@ export const VerseCard = memo(function Verse({
 
         <div className="flex-1 text-right" dir="rtl">
           <p className="text-title-lg font-arabic text-on-surface leading-[2.8] flex flex-wrap justify-start gap-x-2 gap-y-1">
-            {tajweedWords.map((wordObj, idx) => {
-              if (!wordObj.isStopMark) realWordCounter++;
-              const wordId = wordObj.isStopMark ? null : realWordCounter;
-
-              return (
-                <ArabicWord
-                  key={idx}
-                  segments={wordObj.segments}
-                  isStopMark={wordObj.isStopMark}
-                  isHighlighted={
-                    !wordObj.isStopMark &&
-                    isPlayingAyah &&
-                    activeAudioWord === wordId
-                  }
-                />
-              );
-            })}
+            {tajweedWords.map((wordObj, idx) => (
+              <ArabicWord
+                key={idx}
+                segments={wordObj.segments}
+                isStopMark={wordObj.isStopMark}
+                isHighlighted={
+                  !wordObj.isStopMark &&
+                  isPlayingAyah &&
+                  activeAudioWord === wordObj.wordId
+                }
+              />
+            ))}
           </p>
         </div>
       </div>
