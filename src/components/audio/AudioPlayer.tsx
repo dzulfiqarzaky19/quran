@@ -1,8 +1,9 @@
 "use client";
 
+import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "@/store";
-import { fetchAudioSegments, fetchSurahTajweed } from "@/lib/api";
+import { fetchAudioSegments } from "@/lib/api";
 import { useAudioSync } from "@/hooks/useAudioSync";
 import { useShallow } from "zustand/react/shallow";
 
@@ -26,7 +27,6 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
     setPlaybackRate,
     setAudioData,
     setActiveAudioSurah,
-    setTajweedData,
   } = useAppStore(
     useShallow((state) => ({
       isPlaying: state.isPlaying,
@@ -39,7 +39,6 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
       setPlaybackRate: state.setPlaybackRate,
       setAudioData: state.setAudioData,
       setActiveAudioSurah: state.setActiveAudioSurah,
-      setTajweedData: state.setTajweedData,
     })),
   );
 
@@ -52,12 +51,9 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
   useEffect(() => {
     async function loadResources() {
       try {
-        const [audio, tajweed] = await Promise.all([
-          fetchAudioSegments(surahNo),
-          fetchSurahTajweed(surahNo),
-        ]);
+        const audio = await fetchAudioSegments(surahNo);
+
         setAudioData(audio);
-        setTajweedData(tajweed);
         setActiveAudioSurah(surahNo);
         setIsLoaded(true);
       } catch (error) {
@@ -65,7 +61,7 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
       }
     }
     loadResources();
-  }, [surahNo, setAudioData, setTajweedData, setActiveAudioSurah]);
+  }, [surahNo, setAudioData, setActiveAudioSurah]);
 
   useEffect(() => {
     if (!audioRef.current || !isLoaded) return;
@@ -156,30 +152,16 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
               disabled={!activeAudioAyah || activeAudioAyah <= 1}
               className="text-on-surface-variant hover:text-primary transition-colors disabled:opacity-30 disabled:hover:text-on-surface-variant"
             >
-              <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M6 18V6h2v12H6zm3.5-6L18 18V6l-8.5 6z" />
-              </svg>
+              <SkipBack className="w-8 h-8 fill-current" />
             </button>
             <button
               onClick={togglePlay}
               className="w-14 h-14 rounded-full bg-primary text-surface flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
             >
               {isPlaying ? (
-                <svg
-                  className="w-8 h-8"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
-                </svg>
+                <Pause className="w-8 h-8 fill-current" />
               ) : (
-                <svg
-                  className="w-8 h-8 ml-1"
-                  fill="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path d="M8 5v14l11-7z" />
-                </svg>
+                <Play className="w-8 h-8 fill-current ml-1" />
               )}
             </button>
             <button
@@ -191,9 +173,7 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
               }
               className="text-on-surface-variant hover:text-primary transition-colors disabled:opacity-30 disabled:hover:text-on-surface-variant"
             >
-              <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M16 18V6h-2v12h2zM7 6v12l8.5-6L7 6z" />
-              </svg>
+              <SkipForward className="w-8 h-8 fill-current" />
             </button>
           </div>
 

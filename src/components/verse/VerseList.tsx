@@ -1,4 +1,8 @@
-import { fetchSurah, fetchIndonesianTranslation } from "@/lib/api";
+import {
+  fetchSurah,
+  fetchIndonesianTranslation,
+  fetchSurahTajweed,
+} from "@/lib/api";
 import { VerseCard } from "./VerseCard";
 
 interface VerseListProps {
@@ -6,9 +10,10 @@ interface VerseListProps {
 }
 
 export async function VerseList({ surahNo }: VerseListProps) {
-  const [surahData, indonesianVars] = await Promise.all([
+  const [surahData, indonesianVars, tajweedData] = await Promise.all([
     fetchSurah(surahNo),
     fetchIndonesianTranslation(surahNo),
+    fetchSurahTajweed(surahNo),
   ]);
 
   const { arabic1: arabicVars, english: englishVars } = surahData;
@@ -23,6 +28,7 @@ export async function VerseList({ surahNo }: VerseListProps) {
           arabic={arabic}
           english={englishVars[idx]}
           indonesian={indonesianVars[idx]}
+          tajweedData={tajweedData[idx]}
         />
       ))}
     </div>

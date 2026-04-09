@@ -1,3 +1,4 @@
+import { Hexagon } from "lucide-react";
 import { fetchSurah } from "@/lib/api";
 
 interface SurahHeaderProps {
@@ -16,15 +17,10 @@ export const SurahHeader = async ({ surahNo }: SurahHeaderProps) => {
   return (
     <div className="flex flex-col items-center justify-center py-16 mb-8 text-center bg-surface-container-lowest rounded-3xl px-4">
       <div className="w-16 h-16 mb-8 flex items-center justify-center relative">
-        <svg
-          className="absolute inset-0 w-full h-full text-primary/40"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1"
-        >
-          <path d="M12 2L2 12l10 10 10-10L12 2z" />
-        </svg>
+        <Hexagon
+          className="absolute inset-0 w-full h-full text-primary/40 rotate-90"
+          strokeWidth={1}
+        />
         <span className="text-body-lg tracking-widest text-primary z-10 font-bold">
           {surahNo}
         </span>

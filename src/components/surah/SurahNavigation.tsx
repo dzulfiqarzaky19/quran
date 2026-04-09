@@ -1,3 +1,4 @@
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import Link from "next/link";
 
 interface SurahNavigationProps {
@@ -15,19 +16,7 @@ export const SurahNavigation = ({ surahNo }: SurahNavigationProps) => {
           href={`/surah/${prevSurah}`}
           className="flex items-center gap-2 px-6 py-3 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface"
         >
-          <svg
-            className="w-5 h-5 text-on-surface-variant shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
+          <ChevronLeft className="w-5 h-5 text-on-surface-variant shrink-0" />
           <span className="font-semibold text-body-lg text-on-surface-variant hidden sm:inline">
             Prev Surah
           </span>
@@ -48,19 +37,7 @@ export const SurahNavigation = ({ surahNo }: SurahNavigationProps) => {
             Next Surah
           </span>
           <span className="font-semibold text-body-lg sm:hidden">Next</span>
-          <svg
-            className="w-5 h-5 text-white/80 shrink-0"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
+          <ChevronRight className="w-5 h-5 text-white/80 shrink-0" />
         </Link>
       ) : (
         <div />
@@ -68,3 +45,4 @@ export const SurahNavigation = ({ surahNo }: SurahNavigationProps) => {
     </div>
   );
 };
+
