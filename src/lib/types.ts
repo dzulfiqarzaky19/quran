@@ -127,3 +127,25 @@ export interface ChapterAudioResponse {
     timestamps: VerseTimestamp[];
   };
 }
+
+export interface RecitationResource {
+  id: number;
+  reciter_name: string;
+  style: string | null;
+  translated_name: {
+    name: string;
+    language_name: string;
+  };
+}
+
+export interface TranslationResource {
+  id: number;
+  name: string;
+  author_name: string;
+  slug: string;
+  language_name: string;
+  translated_name: {
+    name: string;
+    language_name: string;
+  };
+}

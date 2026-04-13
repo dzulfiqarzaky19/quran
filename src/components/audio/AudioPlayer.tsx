@@ -9,36 +9,29 @@ import { useShallow } from "zustand/react/shallow";
 
 interface AudioPlayerProps {
   surahNo: number;
+  reciterId: number;
 }
 
-export function AudioPlayer({ surahNo }: AudioPlayerProps) {
+export function AudioPlayer({ surahNo, reciterId }: AudioPlayerProps) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const [isLoaded, setIsLoaded] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [duration, setDuration] = useState(0);
 
   // Global state for slow-updating elements
   const {
     isPlaying,
-    duration,
-    playbackRate,
     activeAudioAyah,
     audioData,
     setIsPlaying,
-    setDuration,
-    setPlaybackRate,
     setAudioData,
-    setActiveAudioSurah,
   } = useAppStore(
     useShallow((state) => ({
       isPlaying: state.isPlaying,
-      duration: state.duration,
-      playbackRate: state.playbackRate,
       activeAudioAyah: state.activeAudioAyah,
       audioData: state.audioData,
       setIsPlaying: state.setIsPlaying,
-      setDuration: state.setDuration,
-      setPlaybackRate: state.setPlaybackRate,
       setAudioData: state.setAudioData,
-      setActiveAudioSurah: state.setActiveAudioSurah,
     })),
   );
 
@@ -51,17 +44,16 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
   useEffect(() => {
     async function loadResources() {
       try {
-        const audio = await fetchAudioSegments(surahNo);
+        const audio = await fetchAudioSegments(surahNo, reciterId);
 
         setAudioData(audio);
-        setActiveAudioSurah(surahNo);
         setIsLoaded(true);
       } catch (error) {
         console.error("Failed to load resources:", error);
       }
     }
     loadResources();
-  }, [surahNo, setAudioData, setActiveAudioSurah]);
+  }, [surahNo, reciterId, setAudioData]);
 
   useEffect(() => {
     if (!audioRef.current || !isLoaded) return;
@@ -75,15 +67,6 @@ export function AudioPlayer({ surahNo }: AudioPlayerProps) {
     }
   }, [isPlaying, isLoaded, playbackRate]);
 
-  // Auto-scroll to active ayah
-  useEffect(() => {
-    if (activeAudioAyah && isPlaying) {
-      const element = document.getElementById(`verse-${activeAudioAyah}`);
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth", block: "center" });
-      }
-    }
-  }, [activeAudioAyah, isPlaying]);
 
   const onLoadedMetadata = () => {
     if (audioRef.current) {

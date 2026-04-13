@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { TafsirFetcher } from "./TafsirFetcher";
-import { fetchVerses } from "@/lib/api";
+import { fetchTranslationContent } from "@/lib/api";
 
 interface TafsirModalProps {
   surah: number;
@@ -9,8 +9,8 @@ interface TafsirModalProps {
 }
 
 export const TafsirModal = async ({ surah, ayah }: TafsirModalProps) => {
-  const verseData = await fetchVerses(surah, ayah, 1);
-  const verse = verseData.verses[0];
+  const verseData = await fetchTranslationContent(surah, 33, 1);
+  const verse = verseData.verses.find(v => v.verse_number === ayah);
 
   const arabic = verse?.text_uthmani || "";
   const translation =

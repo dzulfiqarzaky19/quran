@@ -1,7 +1,7 @@
 import Link from 'next/link';
 import { SearchInput } from '../ui/SearchInput';
 import { Suspense } from 'react';
-import { Settings2 } from 'lucide-react';
+import { SettingsButton } from './SettingsButton';
 
 export function TopBar() {
   return (
@@ -15,9 +15,7 @@ export function TopBar() {
             <SearchInput placeholder="Search Surah..." />
           </Suspense>
         </div>
-        <div className="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant cursor-pointer hover:bg-surface-container-high transition-colors">
-          <Settings2 className="w-5 h-5" />
-        </div>
+        <SettingsButton />
       </div>
     </header>
   );

@@ -86,3 +86,21 @@ input[type="range"]::-moz-range-thumb {
 .word-highlight-transition {
   transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+.word-active {
+  background-color: var(--primary);
+  color: var(--surface);
+  transform: scale(1.1);
+  box-shadow: 0 10px 15px -3px rgba(194, 193, 255, 0.2);
+  transition: all 0.2s;
+  border-radius: 0.375rem;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.verse-active {
+  background-color: var(--surface-container-highest);
+  box-shadow: var(--shadow-xl);
+  outline: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
+  transition: all 0.3s;
+}

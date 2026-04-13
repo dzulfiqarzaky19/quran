@@ -1,7 +1,8 @@
-import { SurahCard, SurahWithNo } from "./SurahCard";
+import { Surah } from "@/lib/types";
+import { SurahCard } from "./SurahCard";
 
 interface SurahListProps {
-  surahs: SurahWithNo[];
+  surahs: Surah[];
   searchQuery?: string;
 }
 

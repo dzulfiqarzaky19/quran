@@ -3,21 +3,24 @@ import { VerseCard } from './VerseCard';
 
 jest.mock('@/store', () => ({
   useAppStore: () => ({
-    activeVerse: null,
+    isPlaying: false,
     setActiveVerse: jest.fn(),
   })
 }));
 
 describe('VerseCard', () => {
   it('renders correctly', () => {
+    const defaultProps = {
+      surahNo: 1,
+      ayahNo: 1,
+      arabic: "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِيمِ",
+      translation: "In the name of Allah, the Entirely Merciful, the Especially Merciful.",
+      translationId: 33,
+      tajweedData: ""
+    };
+
     render(
-      <VerseCard 
-        surahNo={1} 
-        ayahNo={1} 
-        arabic="بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِيمِ" 
-        english="In the name of Allah, the Entirely Merciful, the Especially Merciful." 
-        indonesian="Dengan nama Allah Yang Maha Pengasih, Maha Penyayang." 
-      />
+      <VerseCard {...defaultProps} />
     );
     
     expect(screen.getByText('1')).toBeInTheDocument();

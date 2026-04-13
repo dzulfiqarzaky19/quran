@@ -1,22 +1,34 @@
-export default function Loading() {
+import React from "react";
+
+export default function SurahLoading() {
   return (
     <div className="flex flex-col animate-pulse">
-      {/* Skeleton for SurahHeader */}
-      <div className="mb-12">
-        <div className="flex flex-col md:flex-row justify-between items-center gap-8 bg-surface-container-low rounded-3xl p-8 relative overflow-hidden h-64 border border-outline-variant/15">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-bl-full pointer-events-none" />
-        </div>
-      </div>
+      {/* Header Skeleton */}
+      <div className="w-full h-48 bg-surface-container rounded-3xl mb-8" />
 
+      {/* Progress Bar Skeleton */}
       <div className="mb-4 text-center">
         <div className="h-1 w-full max-w-2xl mx-auto rounded-full bg-surface-container overflow-hidden" />
-        <div className="text-label-sm tracking-widest text-on-surface-variant uppercase mt-4 h-4 bg-outline-variant/20 w-24 mx-auto rounded-full" />
+        <div className="h-4 w-20 bg-surface-container mx-auto mt-4 rounded" />
       </div>
 
-      <div className="mt-8 space-y-6">
-        {/* Skeleton for Verse Cards */}
+      {/* Verse List Skeleton */}
+      <div className="mt-8 space-y-6 md:space-y-8">
         {[1, 2, 3, 4, 5].map((i) => (
-          <div key={i} className="relative w-full rounded-2xl p-6 md:p-8 bg-surface-container h-48" />
+          <div key={i} className="w-full h-64 bg-surface-container rounded-3xl p-8">
+            <div className="flex justify-between mb-8">
+              <div className="h-4 w-12 bg-surface-container-high rounded" />
+              <div className="flex gap-2">
+                <div className="h-10 w-10 bg-surface-container-high rounded-xl" />
+                <div className="h-10 w-10 bg-surface-container-high rounded-xl" />
+              </div>
+            </div>
+            <div className="space-y-4">
+              <div className="h-8 w-3/4 bg-surface-container-high rounded ml-auto" />
+              <div className="h-6 w-full bg-surface-container-high rounded" />
+              <div className="h-6 w-2/3 bg-surface-container-high rounded" />
+            </div>
+          </div>
         ))}
       </div>
     </div>
