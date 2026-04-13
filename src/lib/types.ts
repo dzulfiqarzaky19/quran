@@ -1,4 +1,5 @@
 export interface Surah {
+  surahNo: number;
   surahName: string;
   surahNameArabic: string;
   surahNameArabicLong: string;
@@ -48,6 +49,64 @@ export interface IndonesianSurahResponse {
   data: {
     number: number;
     ayahs: IndonesianAyah[];
+  };
+}
+
+export interface Chapter {
+  id: number;
+  revelation_place: string;
+  revelation_order: number;
+  bismillah_pre: boolean;
+  name_simple: string;
+  name_complex: string;
+  name_arabic: string;
+  verses_count: number;
+  pages: [number, number];
+  translated_name: {
+    language_name: string;
+    name: string;
+  };
+}
+
+export interface VerseWord {
+  id: number;
+  position: number;
+  audio_url: string | null;
+  char_type_name: string;
+  text: string;
+  translation: {
+    text: string;
+    language_name: string;
+  };
+  transliteration: {
+    text: string | null;
+    language_name: string;
+  };
+}
+
+export interface Verse {
+  id: number;
+  verse_number: number;
+  verse_key: string;
+  text_uthmani: string;
+  page_number: number;
+  juz_number: number;
+  words?: VerseWord[];
+  translations?: {
+    id: number;
+    resource_id: number;
+    text: string;
+  }[];
+}
+
+export interface VersesResponse {
+  verses: Verse[];
+  pagination: {
+    per_page: number;
+    current_page: number;
+    next_page: number | null;
+    total_pages: number;
+    total_records: number;
   };
 }
 

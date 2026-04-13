@@ -68,7 +68,7 @@ export const TafsirModalContent = ({
                 <div className="glass rounded-2xl p-6 md:p-8 border border-outline-variant/20 mb-12">
                   {arabic && (
                     <p
-                      className="text-headline-sm md:text-headline-md font-arabic text-on-surface leading-loose text-center mb-6"
+                      className="text-headline-lg md:text-headline-md font-arabic text-on-surface leading-loose text-center mb-6"
                       dir="rtl"
                     >
                       {arabic}
@@ -78,7 +78,7 @@ export const TafsirModalContent = ({
                   {translation && (
                     <div className="pt-6 border-t border-outline-variant/10">
                       <p className="text-body-lg text-on-surface-variant italic text-center leading-relaxed">
-                        aaaa{translation}
+                        {translation}
                       </p>
                     </div>
                   )}

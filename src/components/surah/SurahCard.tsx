@@ -2,12 +2,8 @@ import { Hexagon } from "lucide-react";
 import Link from "next/link";
 import { Surah } from "@/lib/types";
 
-export interface SurahWithNo extends Surah {
-  surahNo: number;
-}
-
 interface SurahCardProps {
-  surah: SurahWithNo;
+  surah: Surah;
 }
 
 export const SurahCard = ({ surah }: SurahCardProps) => (

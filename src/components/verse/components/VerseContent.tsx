@@ -3,7 +3,8 @@ import { ArabicWord } from "./ArabicWord";
 import { NumberFrame } from "../../ui/NumberFrame";
 import { getTajweedWords } from "@/utils/tajweed";
 import { useAppStore } from "@/store";
-import { useShallow } from "zustand/shallow";
+import { useShallow } from "zustand/react/shallow";
+import { VerseWord } from "@/lib/types";
 
 interface VerseContentProps {
   ayahNo: number;
@@ -11,6 +12,7 @@ interface VerseContentProps {
   english: string;
   indonesian: string;
   tajweedData: string;
+  words?: VerseWord[];
 }
 
 export const VerseContent = memo(function VerseContent({
@@ -19,6 +21,7 @@ export const VerseContent = memo(function VerseContent({
   english,
   indonesian,
   tajweedData,
+  words,
 }: VerseContentProps) {
   const { isPlayingAyah, activeAudioWord } = useAppStore(
     useShallow((state) => {
@@ -46,11 +49,18 @@ export const VerseContent = memo(function VerseContent({
     });
   }, [tajweedData, arabic]);
 
+  const fullTransliteration = useMemo(() => {
+    return words
+      ?.filter((w) => w.char_type_name === "word")
+      .map((w) => w.transliteration.text)
+      .join(" ");
+  }, [words]);
+
   return (
     <div className="flex flex-col gap-8">
       <div className="text-right" dir="rtl">
         <div className="text-title-lg font-arabic text-on-surface leading-[2.6] flex flex-wrap justify-start gap-x-3 gap-y-2">
-          {tajweedWords.map((wordObj, idx) => (
+          {tajweedWords.map((wordObj: { segments: { text: string; rule?: { color: string; description: string } }[]; isStopMark: boolean; wordId: number | null }, idx: number) => (
             <ArabicWord
               key={idx}
               segments={wordObj.segments}
@@ -67,6 +77,11 @@ export const VerseContent = memo(function VerseContent({
       </div>
 
       <div className="space-y-4">
+        {fullTransliteration && (
+          <p className="text-body-lg text-primary/80 font-medium italic tracking-wide">
+            {fullTransliteration}
+          </p>
+        )}
         <p
           className={`text-body-lg transition-colors ${
             isPlayingAyah ? "text-primary font-medium" : "text-on-surface"

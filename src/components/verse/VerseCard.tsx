@@ -6,6 +6,8 @@ import { VerseHeader } from "./components/VerseHeader";
 import { VerseContent } from "./components/VerseContent";
 import { VerseFooter } from "./components/VerseFooter";
 
+import { VerseWord } from "@/lib/types";
+
 interface VerseCardProps {
   surahNo: number;
   ayahNo: number;
@@ -13,6 +15,7 @@ interface VerseCardProps {
   english: string;
   indonesian: string;
   tajweedData: string;
+  words?: VerseWord[];
 }
 
 export const VerseCard = memo(function Verse({
@@ -22,6 +25,7 @@ export const VerseCard = memo(function Verse({
   english,
   indonesian,
   tajweedData,
+  words,
 }: VerseCardProps) {
   const { isReading, isPlayingAyah } = useAppStore(
     useShallow((state) => ({
@@ -47,6 +51,7 @@ export const VerseCard = memo(function Verse({
         english={english}
         indonesian={indonesian}
         tajweedData={tajweedData}
+        words={words}
       />
 
       <VerseFooter ayahNo={ayahNo} />

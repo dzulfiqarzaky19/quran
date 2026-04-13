@@ -1,36 +1,27 @@
 import {
-  fetchSurah,
-  fetchIndonesianTranslation,
+  fetchVerses,
   fetchSurahTajweed,
 } from "@/lib/api";
-import { VerseCard } from "./VerseCard";
+import { InfiniteVerseList } from "./InfiniteVerseList";
 
 interface VerseListProps {
   surahNo: number;
 }
 
 export async function VerseList({ surahNo }: VerseListProps) {
-  const [surahData, indonesianVars, tajweedData] = await Promise.all([
-    fetchSurah(surahNo),
-    fetchIndonesianTranslation(surahNo),
+  // Fetch first page of verses (10 verses) and full Tajweed markers
+  const [versesData, tajweedData] = await Promise.all([
+    fetchVerses(surahNo, 1, 10),
     fetchSurahTajweed(surahNo),
   ]);
 
-  const { arabic1: arabicVars, english: englishVars } = surahData;
-
   return (
-    <div className="flex flex-col gap-6 md:gap-8">
-      {arabicVars.map((arabic, idx) => (
-        <VerseCard
-          key={idx}
-          surahNo={surahNo}
-          ayahNo={idx + 1}
-          arabic={arabic}
-          english={englishVars[idx]}
-          indonesian={indonesianVars[idx]}
-          tajweedData={tajweedData[idx]}
-        />
-      ))}
-    </div>
+    <InfiniteVerseList
+      surahNo={surahNo}
+      initialVerses={versesData.verses}
+      initialPage={1}
+      totalPages={versesData.pagination.total_pages}
+      initialTajweedData={tajweedData}
+    />
   );
 }
