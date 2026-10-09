@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { AudioPlayer } from "@/components/audio/AudioPlayer";
 import { fetchSurah, fetchRecitations, fetchTranslations } from "@/lib/api";
 import { SettingsSidebar } from "@/components/layout/SettingsSidebar";
+import { ReadingBar } from "@/components/layout/ReadingBar";
 
 export const revalidate = 86400; // Cache for 24 hours
 
@@ -41,37 +42,24 @@ export default async function SurahPage({
   ]);
 
   return (
-    <div className="flex flex-col">
+    <div className="reader-snap mx-auto flex w-full max-w-2xl flex-col">
+      <ReadingBar surah={surah} />
+
       <SurahHeader surahNo={surahId} />
 
-      <div className="mb-4 text-center">
-        <div className="h-1 w-full max-w-2xl mx-auto rounded-full bg-surface-container overflow-hidden">
-          <div className="h-full bg-primary flex" style={{ width: "10%" }} />
-        </div>
-        <div className="text-label-sm tracking-widest text-on-surface-variant uppercase mt-4">
-          READING
-        </div>
-      </div>
-
-      <div className="mt-8 mb-32">
-        <Suspense fallback={
-          <div className="space-y-8 animate-pulse">
-            {[1, 2, 3].map(i => (
-              <div key={i} className="w-full h-64 bg-surface-container rounded-3xl" />
-            ))}
-          </div>
-        }>
-          <VerseList 
-            surahNo={surahId} 
-            totalVerses={surah.totalAyah} 
-            translationId={translationId}
-          />
-        </Suspense>
-      </div>
+      <Suspense fallback={
+        <div className="min-h-[100svh] animate-pulse rounded-3xl bg-surface-container" />
+      }>
+        <VerseList 
+          surahNo={surahId} 
+          totalVerses={surah.totalAyah} 
+          translationId={translationId}
+        />
+      </Suspense>
 
       <SurahNavigation surahNo={surahId} />
 
-      {targetAyah && <TafsirModal surah={surahId} ayah={targetAyah} />}
+      {targetAyah > 0 && <TafsirModal surah={surahId} ayah={targetAyah} />}
 
       <AudioPlayer surahNo={surahId} reciterId={reciterId} />
 

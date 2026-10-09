@@ -1,6 +1,7 @@
 import { fetchArabicContent, fetchTranslationContent, fetchSurahTajweed } from "@/lib/api";
 import { VerseCard } from "./VerseCard";
 import { WordHighlightManager } from "./WordHighlightManager";
+import { ReadingTracker } from "@/components/reading/ReadingTracker";
 
 interface VerseListProps {
   surahNo: number;
@@ -20,9 +21,10 @@ export async function VerseList({
   ]);
 
   return (
-    <div className="w-full flex flex-col gap-6 md:gap-8">
+    <div className="w-full flex flex-col">
       {/* Client island for DOM-based highlighting sync */}
       <WordHighlightManager />
+      <ReadingTracker surahNo={surahNo} />
 
       {arabicData.verses.map((verse, index) => {
         const translation =
@@ -35,6 +37,7 @@ export async function VerseList({
             key={verse.id}
             surahNo={surahNo}
             ayahNo={verse.verse_number}
+            totalAyah={totalVerses}
             arabic={verse.text_uthmani}
             translation={translation}
             translationId={translationId}

@@ -10,7 +10,7 @@ export const SurahNavigation = ({ surahNo }: SurahNavigationProps) => {
   const nextSurah = surahNo < 114 ? surahNo + 1 : null;
 
   return (
-    <div className="mt-16 pt-8 border-t border-outline-variant/15 flex justify-between items-center pb-16">
+    <div className="snap-end pt-8 flex justify-between items-center pb-8">
       {prevSurah ? (
         <Link
           href={`/surah/${prevSurah}`}

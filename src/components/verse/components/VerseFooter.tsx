@@ -1,26 +1,37 @@
 import Link from "next/link";
+import { VerseHeaderActions } from "./VerseHeaderActions";
+import { VerseCopyButton } from "./VerseCopyButton";
+import { VerseBookmarkButton } from "./VerseBookmarkButton";
 
 interface VerseFooterProps {
+  surahNo: number;
   ayahNo: number;
+  arabic: string;
+  translation: string;
 }
 
-export const VerseFooter = ({ ayahNo }: VerseFooterProps) => (
-  <div className="flex flex-wrap gap-6 mt-4 pt-6 border-t border-outline-variant/10">
-    <Link
-      href={`?tafsir=${ayahNo}`}
-      scroll={false}
-      className="flex items-center gap-2 text-label-sm font-black tracking-widest text-primary hover:bg-primary/5 px-3 py-1.5 rounded-lg transition-colors uppercase"
-    >
-      Tafsir
-    </Link>
-    <button className="flex items-center gap-2 text-label-sm font-black tracking-widest text-on-surface-variant/70 hover:text-on-surface px-3 py-1.5 rounded-lg transition-colors uppercase">
-      Pelajaran
-    </button>
-    <button className="flex items-center gap-2 text-label-sm font-black tracking-widest text-on-surface-variant/70 hover:text-on-surface px-3 py-1.5 rounded-lg transition-colors uppercase">
-      Refleksi
-    </button>
-    <button className="flex items-center gap-2 text-label-sm font-black tracking-widest text-on-surface-variant/70 hover:text-on-surface px-3 py-1.5 rounded-lg transition-colors uppercase ml-auto">
-      Jawaban
-    </button>
-  </div>
-);
+export const VerseFooter = ({
+  surahNo,
+  ayahNo,
+  arabic,
+  translation,
+}: VerseFooterProps) => {
+  // Translations carry footnote markup; copy plain text only
+  const plainTranslation = translation.replace(/<sup[^>]*>.*?<\/sup>/g, "").replace(/<[^>]+>/g, "");
+  const copyText = `${arabic}\n\n${plainTranslation}\n(${surahNo}:${ayahNo})`;
+
+  return (
+    <div className="flex flex-wrap items-center justify-center gap-1">
+      <VerseHeaderActions surahNo={surahNo} ayahNo={ayahNo} />
+      <Link
+        href={`?tafsir=${ayahNo}`}
+        scroll={false}
+        className="flex items-center h-11 text-label-sm font-black tracking-widest text-primary hover:bg-primary/5 px-3 rounded-xl transition-colors uppercase active:scale-[0.98]"
+      >
+        Tafsir
+      </Link>
+      <VerseCopyButton text={copyText} />
+      <VerseBookmarkButton surahNo={surahNo} ayahNo={ayahNo} />
+    </div>
+  );
+};

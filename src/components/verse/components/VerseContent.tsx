@@ -1,5 +1,4 @@
 import { ArabicWord } from "./ArabicWord";
-import { NumberFrame } from "../../ui/NumberFrame";
 import { getTajweedWords } from "@/utils/tajweed";
 import { VerseWord } from "@/lib/types";
 import { VerseTranslation } from "./VerseTranslation";
@@ -40,24 +39,25 @@ export const VerseContent = ({
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="text-right" dir="rtl">
-        <div className="text-title-lg font-arabic text-on-surface leading-[2.6] flex flex-wrap justify-start gap-x-3 gap-y-2">
-          {tajweedWords.map((wordObj, idx) => (
+      <div
+        className="font-arabic text-[2rem] text-on-surface leading-[2.5]"
+        dir="rtl"
+      >
+        {tajweedWords.map((wordObj, idx) => (
+          <span key={idx}>
             <ArabicWord
-              key={idx}
               ayahNo={ayahNo}
               wordId={wordObj.wordId}
               segments={wordObj.segments}
               isStopMark={wordObj.isStopMark}
-            />
-          ))}
-          <NumberFrame ayahNo={ayahNo} className="mr-2" />
-        </div>
+            />{" "}
+          </span>
+        ))}
       </div>
 
-      <div className="space-y-4">
+      <div>
         {fullTransliteration && (
-          <p className="text-body-lg text-primary/80 font-medium italic tracking-wide">
+          <p className="text-body-sm text-primary/80">
             {fullTransliteration}
           </p>
         )}

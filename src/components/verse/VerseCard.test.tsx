@@ -13,6 +13,7 @@ describe('VerseCard', () => {
     const defaultProps = {
       surahNo: 1,
       ayahNo: 1,
+      totalAyah: 7,
       arabic: "بِسۡمِ ٱللَّهِ ٱلرَّحۡمَـٰنِ ٱلرَّحِيمِ",
       translation: "In the name of Allah, the Entirely Merciful, the Especially Merciful.",
       translationId: 33,

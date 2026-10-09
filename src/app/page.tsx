@@ -1,5 +1,6 @@
 import { fetchSurahList } from "@/lib/api";
 import { SurahList } from "@/components/surah/SurahList";
+import { ReadingResume } from "@/components/reading/ReadingResume";
 
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -23,15 +24,15 @@ export default async function Home(props: PageProps) {
   });
 
   return (
-    <div className="flex flex-col">
-      <div className="mb-16 mt-8">
-        <h1 className="text-display-lg font-bold text-center tracking-tight mb-4">
-          The Sacred Lens
-        </h1>
-        <p className="text-center text-on-surface-variant text-body-lg max-w-2xl mx-auto">
-          A high-precision editorial reading experience.
+    <div className="mx-auto flex w-full max-w-5xl flex-col">
+      <div className="mb-6 flex items-baseline justify-between gap-4 px-3">
+        <h1 className="text-title-lg font-bold tracking-tight">Al-Quran</h1>
+        <p className="shrink-0 text-label-sm uppercase tracking-[0.05em] text-on-surface-variant">
+          {q ? `${filteredSurahs.length} of ${surahs.length}` : `${surahs.length} surahs`}
         </p>
       </div>
+
+      {!q && <ReadingResume surahNames={surahs.map((s) => s.surahName)} />}
 
       <SurahList surahs={filteredSurahs} searchQuery={q} />
     </div>

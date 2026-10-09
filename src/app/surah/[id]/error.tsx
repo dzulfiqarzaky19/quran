@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 export default function Error({
   error,
   reset,
@@ -39,6 +41,13 @@ export default function Error({
       >
         Try Again
       </button>
+
+      <Link
+        href="/"
+        className="flex items-center h-11 px-3 rounded-xl text-label-sm font-bold tracking-[0.05em] uppercase text-on-surface-variant hover:text-primary transition-colors"
+      >
+        All Surahs
+      </Link>
     </div>
   );
 }

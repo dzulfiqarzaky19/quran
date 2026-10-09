@@ -6,6 +6,7 @@ import { VerseWord } from "@/lib/types";
 interface VerseCardProps {
   surahNo: number;
   ayahNo: number;
+  totalAyah: number;
   arabic: string;
   translation: string;
   translationId: number;
@@ -13,9 +14,11 @@ interface VerseCardProps {
   words?: VerseWord[];
 }
 
+// One ayah fills the screen; the page snaps from ayah to ayah.
 export const VerseCard = ({
   surahNo,
   ayahNo,
+  totalAyah,
   arabic,
   translation,
   translationId,
@@ -23,11 +26,11 @@ export const VerseCard = ({
   words,
 }: VerseCardProps) => {
   return (
-    <div
+    <section
       id={`verse-${ayahNo}`}
-      className="relative w-full rounded-3xl p-6 md:p-8 transition-all duration-300 bg-surface-container hover:bg-surface-container-high"
+      className="flex min-h-[100svh] w-full snap-start flex-col justify-center gap-8 rounded-3xl px-3 py-24 text-center"
     >
-      <VerseHeader surahNo={surahNo} ayahNo={ayahNo} />
+      <VerseHeader ayahNo={ayahNo} totalAyah={totalAyah} />
 
       <VerseContent
         ayahNo={ayahNo}
@@ -38,7 +41,12 @@ export const VerseCard = ({
         words={words}
       />
 
-      <VerseFooter ayahNo={ayahNo} />
-    </div>
+      <VerseFooter
+        surahNo={surahNo}
+        ayahNo={ayahNo}
+        arabic={arabic}
+        translation={translation}
+      />
+    </section>
   );
 };

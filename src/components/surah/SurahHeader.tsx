@@ -1,4 +1,3 @@
-import { Hexagon } from "lucide-react";
 import { fetchSurah } from "@/lib/api";
 
 interface SurahHeaderProps {
@@ -15,40 +14,31 @@ export const SurahHeader = async ({ surahNo }: SurahHeaderProps) => {
   } = await fetchSurah(surahNo);
 
   return (
-    <div className="flex flex-col items-center justify-center py-16 mb-8 text-center bg-surface-container-lowest rounded-3xl px-4">
-      <div className="w-16 h-16 mb-8 flex items-center justify-center relative">
-        <Hexagon
-          className="absolute inset-0 w-full h-full text-primary/40 rotate-90"
-          strokeWidth={1}
-        />
-        <span className="text-body-lg tracking-widest text-primary z-10 font-bold">
-          {surahNo}
-        </span>
-      </div>
-
-      <h1 className="text-display-lg font-bold mb-4">{surahName}</h1>
-      <h2 className="text-title-lg font-arabic text-on-surface mb-6">
+    <section className="flex min-h-[100svh] snap-start flex-col items-center justify-center gap-4 py-24 text-center">
+      <p
+        className="font-arabic text-[2.5rem] leading-[1.8] text-on-surface"
+        dir="rtl"
+      >
         {surahNameArabic}
-      </h2>
-
-      <p className="text-body-lg text-on-surface-variant max-w-md mx-auto mb-6">
+      </p>
+      <h1 className="min-w-0 text-display-lg font-bold text-on-surface [overflow-wrap:anywhere]">
+        {surahName}
+      </h1>
+      <p className="text-body-lg text-on-surface-variant">
         {surahNameTranslation}
       </p>
-
-      <div className="text-label-sm text-on-surface-variant tracking-[0.05em] uppercase px-6 py-2 bg-surface-container-low rounded-full">
+      <p className="text-label-sm text-on-surface-variant tracking-[0.05em] uppercase">
         {revelationPlace} • {totalAyah} VERSES
-      </div>
+      </p>
 
       {surahNo !== 1 && surahNo !== 9 && (
-        <div className="mt-12 pt-12 border-t border-outline-variant/15 w-full max-w-md">
-          <p
-            className="text-display-lg font-arabic text-on-surface leading-normal pb-4"
-            dir="rtl"
-          >
-            بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
-          </p>
-        </div>
+        <p
+          className="mt-10 font-arabic text-[2rem] leading-[2.2] text-on-surface"
+          dir="rtl"
+        >
+          بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+        </p>
       )}
-    </div>
+    </section>
   );
 };

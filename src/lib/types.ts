@@ -149,3 +149,21 @@ export interface TranslationResource {
     language_name: string;
   };
 }
+
+export interface DzikirCategory {
+  id: number;
+  title: string;
+  count: number;
+}
+
+export interface DzikirItem {
+  id: number;
+  arabic: string;
+  transliteration: string;
+  translation: string;
+  repeat: number;
+}
+
+export interface DzikirCategoryDetail extends DzikirCategory {
+  items: DzikirItem[];
+}

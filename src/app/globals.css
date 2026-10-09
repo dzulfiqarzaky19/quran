@@ -1,3 +1,4 @@
+/* Hallmark · macrostructure: Marquee Hero · tone: austere editorial · theme: design.md (The Sacred Lens) · anchor hue: lavender · nav: reading bar · footer: none */
 @import "tailwindcss";
 
 :root {
@@ -99,8 +100,28 @@ input[type="range"]::-moz-range-thumb {
 }
 
 .verse-active {
-  background-color: var(--surface-container-highest);
-  box-shadow: var(--shadow-xl);
-  outline: 1px solid color-mix(in srgb, var(--primary) 20%, transparent);
-  transition: all 0.3s;
+  background-color: var(--surface-container-low);
+  transition: background-color 0.3s;
+}
+
+html,
+body {
+  overflow-x: clip;
+}
+
+/* Reading view: one ayah per screen, the page snaps from ayah to ayah */
+html:has(.reader-snap) {
+  scroll-snap-type: y mandatory;
+  scroll-padding-bottom: 6rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .word-active {
+    transform: none;
+  }
 }

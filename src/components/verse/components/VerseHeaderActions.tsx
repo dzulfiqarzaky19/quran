@@ -50,7 +50,7 @@ export const VerseHeaderActions = ({ surahNo, ayahNo }: VerseHeaderActionsProps)
   return (
     <button
       onClick={handlePlayFromHere}
-      className={`w-10 h-10 rounded-xl flex items-center justify-center transition-all ${
+      className={`w-11 h-11 rounded-xl flex items-center justify-center transition-all ${
         isActuallyPlaying
           ? "bg-primary text-surface shadow-lg shadow-primary/20 scale-105"
           : "text-on-surface-variant hover:bg-surface-container-highest hover:text-primary"

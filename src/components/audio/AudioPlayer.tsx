@@ -97,80 +97,69 @@ export function AudioPlayer({ surahNo, reciterId }: AudioPlayerProps) {
   if (!audioData) return null;
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-50 px-4 pb-4 md:pb-6 pointer-events-none">
-      <div className="max-w-4xl mx-auto glass rounded-3xl p-4 md:p-6 shadow-2xl border border-outline-variant/20 pointer-events-auto flex flex-col gap-4">
-        <div className="flex items-center gap-4">
-          <span className="text-label-sm text-on-surface-variant w-10">
-            {formatTime(localTime)}
-          </span>
-          <input
-            type="range"
-            min={0}
-            max={duration || 100}
-            step={0.1}
-            value={localTime}
-            onChange={handleSeek}
-            className="flex-1"
-          />
-          <span className="text-label-sm text-on-surface-variant w-10">
-            {formatTime(duration)}
-          </span>
+    <div className="fixed bottom-0 left-0 right-0 z-40 glass pb-[env(safe-area-inset-bottom)]">
+      <input
+        type="range"
+        aria-label="Seek"
+        min={0}
+        max={duration || 100}
+        step={0.1}
+        value={localTime}
+        onChange={handleSeek}
+        className="block"
+      />
+
+      <div className="max-w-3xl mx-auto h-14 px-2 flex items-center gap-1">
+        <button
+          onClick={togglePlay}
+          aria-label={isPlaying ? "Pause" : "Play"}
+          className="w-11 h-11 shrink-0 rounded-xl bg-primary text-surface flex items-center justify-center active:scale-[0.98] transition-transform"
+        >
+          {isPlaying ? (
+            <Pause className="w-5 h-5 fill-current" />
+          ) : (
+            <Play className="w-5 h-5 fill-current ml-0.5" />
+          )}
+        </button>
+
+        <div className="flex-1 min-w-0 px-2">
+          <p className="text-body-sm font-semibold text-on-surface truncate">
+            {activeAudioAyah ? `Ayah ${activeAudioAyah}` : "Recitation"}
+          </p>
+          <p className="text-label-sm text-on-surface-variant">
+            {formatTime(localTime)} / {formatTime(duration)}
+          </p>
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 md:gap-4">
-            <button
-              onClick={() =>
-                setPlaybackRate(playbackRate >= 2 ? 0.5 : playbackRate + 0.5)
-              }
-              className="px-3 py-1.5 rounded-full bg-surface-container-high hover:bg-surface-bright text-label-sm font-bold text-primary transition-colors"
-            >
-              {playbackRate}x
-            </button>
-          </div>
-
-          <div className="flex items-center gap-4 md:gap-8">
-            <button
-              onClick={handlePrev}
-              disabled={!activeAudioAyah || activeAudioAyah <= 1}
-              className="text-on-surface-variant hover:text-primary transition-colors disabled:opacity-30 disabled:hover:text-on-surface-variant"
-            >
-              <SkipBack className="w-8 h-8 fill-current" />
-            </button>
-            <button
-              onClick={togglePlay}
-              className="w-14 h-14 rounded-full bg-primary text-surface flex items-center justify-center hover:scale-105 active:scale-95 transition-all shadow-lg shadow-primary/20"
-            >
-              {isPlaying ? (
-                <Pause className="w-8 h-8 fill-current" />
-              ) : (
-                <Play className="w-8 h-8 fill-current ml-1" />
-              )}
-            </button>
-            <button
-              onClick={handleNext}
-              disabled={
-                !activeAudioAyah ||
-                !audioData ||
-                activeAudioAyah >= audioData.audio_file.timestamps.length
-              }
-              className="text-on-surface-variant hover:text-primary transition-colors disabled:opacity-30 disabled:hover:text-on-surface-variant"
-            >
-              <SkipForward className="w-8 h-8 fill-current" />
-            </button>
-          </div>
-
-          <div className="hidden md:flex items-center gap-3">
-            <div className="text-right">
-              <p className="text-label-sm text-on-surface-variant leading-none mb-1 uppercase tracking-widest">
-                Playing Ayah
-              </p>
-              <p className="text-body-sm font-bold text-primary">
-                {activeAudioAyah || "-"}
-              </p>
-            </div>
-          </div>
-        </div>
+        <button
+          onClick={handlePrev}
+          disabled={!activeAudioAyah || activeAudioAyah <= 1}
+          aria-label="Previous ayah"
+          className="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors disabled:opacity-30 disabled:hover:text-on-surface-variant"
+        >
+          <SkipBack className="w-5 h-5 fill-current" />
+        </button>
+        <button
+          onClick={handleNext}
+          disabled={
+            !activeAudioAyah ||
+            !audioData ||
+            activeAudioAyah >= audioData.audio_file.timestamps.length
+          }
+          aria-label="Next ayah"
+          className="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center text-on-surface-variant hover:text-primary transition-colors disabled:opacity-30 disabled:hover:text-on-surface-variant"
+        >
+          <SkipForward className="w-5 h-5 fill-current" />
+        </button>
+        <button
+          onClick={() =>
+            setPlaybackRate(playbackRate >= 2 ? 0.5 : playbackRate + 0.5)
+          }
+          aria-label="Playback speed"
+          className="w-11 h-11 shrink-0 rounded-xl flex items-center justify-center text-label-sm font-bold text-primary hover:bg-surface-container-high transition-colors"
+        >
+          {playbackRate}x
+        </button>
       </div>
 
       <audio

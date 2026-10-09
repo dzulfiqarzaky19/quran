@@ -1,7 +1,8 @@
 import { render, screen } from '@testing-library/react';
-import { SurahCard, SurahWithNo } from './SurahCard';
+import { SurahCard } from './SurahCard';
+import { Surah } from '@/lib/types';
 
-const mockSurah: SurahWithNo = {
+const mockSurah: Surah = {
   surahNo: 1,
   surahName: 'Al-Fatihah',
   surahNameArabic: 'الفاتحة',
@@ -14,11 +15,11 @@ const mockSurah: SurahWithNo = {
 describe('SurahCard', () => {
   it('renders correctly', () => {
     render(<SurahCard surah={mockSurah} />);
-    
+
     expect(screen.getByText('Al-Fatihah')).toBeInTheDocument();
     expect(screen.getByText('الفاتحة')).toBeInTheDocument();
-    expect(screen.getByText('The Opening')).toBeInTheDocument();
-    expect(screen.getByText('Mecca • 7 VERSES')).toBeInTheDocument();
+    expect(screen.getByText('The Opening · 7 verses')).toBeInTheDocument();
     expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByRole('link')).toHaveAttribute('href', '/surah/1');
   });
 });

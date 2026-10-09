@@ -1,23 +1,63 @@
+"use client";
+
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { SearchInput } from '../ui/SearchInput';
 import { Suspense } from 'react';
-import { SettingsButton } from './SettingsButton';
+
+const SECTIONS = [
+  { href: '/', label: 'Quran' },
+  { href: '/dzikir', label: 'Dzikir' },
+  { href: '/tasbih', label: 'Tasbih' },
+  { href: '/prayer', label: 'Prayer' },
+  { href: '/hijri', label: 'Hijri' },
+];
+
+// Only the index pages are searchable
+const SEARCH: Record<string, { placeholder: string; label: string }> = {
+  '/': { placeholder: 'Search by name or number', label: 'Search surahs' },
+  '/dzikir': { placeholder: 'Search topics', label: 'Search dzikir topics' },
+};
 
 export function TopBar() {
+  const pathname = usePathname();
+
+  // The reading view brings its own slim bar (ReadingBar)
+  if (pathname.startsWith('/surah/')) return null;
+
+  const search = SEARCH[pathname];
+
   return (
-    <header className="sticky top-0 z-50 w-full glass border-b border-outline-variant/15">
-      <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between gap-4">
-        <Link href="/" className="text-body-lg font-bold tracking-[0.05em] text-primary">
-          AL-QURAN
-        </Link>
-        <div className="flex-1 flex justify-center">
-          <Suspense fallback={<div className="relative w-full max-w-md h-[46px] bg-surface-container-highest rounded-xl animate-pulse" />}>
-            <SearchInput placeholder="Search Surah..." />
-          </Suspense>
+    <header className="sticky top-0 z-40 w-full glass">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
+        <div className="max-w-5xl mx-auto">
+          {/* Home is an index: search is the header */}
+          {search && (
+            <div className="h-16 flex items-center [&>div]:max-w-none">
+              <Suspense fallback={<div className="w-full h-12 bg-surface-container-highest rounded-xl animate-pulse" />}>
+                <SearchInput key={pathname} placeholder={search.placeholder} aria-label={search.label} />
+              </Suspense>
+            </div>
+          )}
+          <nav aria-label="Sections" className="flex h-12 items-center gap-1">
+            {SECTIONS.map(({ href, label }) => {
+              const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
+              return (
+                <Link
+                  key={href}
+                  href={href}
+                  aria-current={active ? 'page' : undefined}
+                  className={`flex h-11 items-center rounded-xl px-3 text-body-sm font-semibold transition-colors active:scale-[0.98] ${
+                    active ? 'text-primary' : 'text-on-surface-variant hover:text-on-surface'
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </nav>
         </div>
-        <SettingsButton />
       </div>
     </header>
   );
 }
-
