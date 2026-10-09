@@ -74,6 +74,10 @@ export function localDay(date: Date): string {
   return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
 }
 
+/** Days since the Unix epoch in the timezone of `date`. Pass no offset for UTC. */
+export const dayNumber = (date: Date, offsetMinutes = 0): number =>
+  Math.floor((date.getTime() - offsetMinutes * 60_000) / 86_400_000);
+
 /** `surahNames` is the full list in order, index 0 = Al-Fatihah. */
 export const ayahLabel = (surahNames: string[], { surahNo, ayahNo }: AyahRef): string =>
   `${surahNames[surahNo - 1] ?? `Surah ${surahNo}`} · verse ${ayahNo}`;

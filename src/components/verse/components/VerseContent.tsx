@@ -39,7 +39,8 @@ export const VerseContent = ({
 
   // The Arabic comes from the tajweed source and the meanings from another, so
   // they are only paired when both split the ayah into the same number of words
-  const showGloss = wordByWord && glossWords.length > 0 && glossWords.length === counter;
+  const paired = glossWords.length > 0 && glossWords.length === counter;
+  const showGloss = wordByWord && paired;
 
   return (
     <div className="flex flex-col gap-8">
@@ -48,13 +49,18 @@ export const VerseContent = ({
         dir="rtl"
       >
         {tajweedWords.map((wordObj, idx) => {
-          const gloss = showGloss && wordObj.wordId !== null ? glossWords[wordObj.wordId - 1] : null;
+          const pairedWord = paired && wordObj.wordId !== null ? glossWords[wordObj.wordId - 1] : null;
+          const gloss = showGloss ? pairedWord : null;
+          // With the glosses already on screen there is nothing to tap for
+          const tappable = showGloss ? null : pairedWord;
           const arabicWord = (
             <ArabicWord
               ayahNo={ayahNo}
               wordId={wordObj.wordId}
               segments={wordObj.segments}
               isStopMark={wordObj.isStopMark}
+              meaning={tappable?.translation.text}
+              transliteration={tappable?.transliteration.text}
             />
           );
 

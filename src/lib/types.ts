@@ -167,3 +167,45 @@ export interface DzikirItem {
 export interface DzikirCategoryDetail extends DzikirCategory {
   items: DzikirItem[];
 }
+
+export type HadithCollectionId = 'bukhari' | 'muslim' | 'nawawi';
+
+export interface HadithCollection {
+  id: HadithCollectionId;
+  title: string;
+  description: string;
+}
+
+// A "book" inside a collection, with the range of hadith numbers it holds
+export interface HadithSection {
+  id: number;
+  title: string;
+  first: number;
+  last: number;
+}
+
+export interface Hadith {
+  number: number;
+  arabic: string;
+  text: string;
+}
+
+export interface HadithSectionDetail extends HadithSection {
+  hadiths: Hadith[];
+}
+
+export interface HadithSearchResult {
+  number: number;
+  text: string;
+  sectionId: number | null;
+}
+
+export interface DzikirGroup {
+  title: string;
+  topics: DzikirCategoryDetail[];
+}
+
+export interface DailyDzikir {
+  item: DzikirItem;
+  category: DzikirCategory;
+}

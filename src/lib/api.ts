@@ -1,4 +1,4 @@
-import { Surah, SurahDetail, TafsirResponse, ChapterAudioResponse, Chapter, VersesResponse, RecitationResource, TranslationResource } from './types';
+import { Surah, SurahDetail, TafsirResponse, ChapterAudioResponse, Chapter, Verse, VersesResponse,RecitationResource, TranslationResource } from './types';
 
 const PRIMARY_API = 'https://api.quran.com/api/v4';
 const TAFSEER_API = 'https://quranapi.pages.dev/api';
@@ -104,6 +104,20 @@ export async function fetchTranslationContent(
       total_records: allVerses.length
     }
   };
+}
+
+export async function fetchVerse(
+  surahNo: number,
+  ayahNo: number,
+  translationId: number = 33
+): Promise<Verse> {
+  const res = await fetch(
+    `${PRIMARY_API}/verses/by_key/${surahNo}:${ayahNo}?language=en&translations=${translationId}&fields=text_uthmani`,
+    { next: { revalidate: 86400 } }
+  );
+  if (!res.ok) throw new Error(`Failed to fetch verse ${surahNo}:${ayahNo}`);
+  const data: { verse: Verse } = await res.json();
+  return data.verse;
 }
 
 export async function fetchTafsir(surahNo: number, ayahNo: number): Promise<TafsirResponse> {

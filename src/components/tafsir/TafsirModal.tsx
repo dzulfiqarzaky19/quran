@@ -1,20 +1,28 @@
 import Link from "next/link";
 import { Suspense } from "react";
 import { TafsirFetcher } from "./TafsirFetcher";
-import { fetchTranslationContent } from "@/lib/api";
+import { fetchVerse } from "@/lib/api";
 
 interface TafsirModalProps {
   surah: number;
   ayah: number;
+  translationId: number;
 }
 
-export const TafsirModal = async ({ surah, ayah }: TafsirModalProps) => {
-  const verseData = await fetchTranslationContent(surah, 33, 1);
-  const verse = verseData.verses.find(v => v.verse_number === ayah);
+export const TafsirModal = async ({ surah, ayah, translationId }: TafsirModalProps) => {
+  // The tafsir is still worth showing when the verse itself fails to load
+  const verse = await fetchVerse(surah, ayah, translationId).catch((err) => {
+    console.error("Failed to fetch verse for tafsir:", err);
+    return null;
+  });
 
   const arabic = verse?.text_uthmani || "";
-  const translation =
-    verse?.translations?.find((t) => t.resource_id === 33)?.text || "";
+  // Translations carry footnote markup; show plain text only
+  const translation = (
+    verse?.translations?.find((t) => t.resource_id === translationId)?.text || ""
+  )
+    .replace(/<sup[^>]*>.*?<\/sup>/g, "")
+    .replace(/<[^>]+>/g, "");
 
   return (
     <div className="fixed inset-0 z-100 flex items-center justify-center p-0 md:p-6">

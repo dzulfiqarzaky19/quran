@@ -4,7 +4,7 @@
 
 const CACHE = 'quran-v1';
 const OFFLINE_URL = '/offline';
-const SHELL = ['/', '/dzikir', '/tasbih', '/prayer', '/hijri', '/hifz', '/reading', OFFLINE_URL];
+const SHELL = ['/', '/dzikir', '/dzikir/daily', '/tasbih', '/prayer', '/hijri', '/hifz', '/hadith', '/zakat', '/reading', OFFLINE_URL];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(

@@ -61,7 +61,9 @@ export default async function SurahPage({
 
       <SurahNavigation surahNo={surahId} />
 
-      {targetAyah > 0 && <TafsirModal surah={surahId} ayah={targetAyah} />}
+      {targetAyah > 0 && (
+        <TafsirModal surah={surahId} ayah={targetAyah} translationId={translationId} />
+      )}
 
       <AudioPlayer surahNo={surahId} reciterId={reciterId} />
 

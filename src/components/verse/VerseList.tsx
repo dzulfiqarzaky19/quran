@@ -1,6 +1,7 @@
 import { fetchArabicContent, fetchTranslationContent, fetchSurahTajweed } from "@/lib/api";
 import { VerseCard } from "./VerseCard";
 import { WordHighlightManager } from "./WordHighlightManager";
+import { WordMeaningPopover } from "./WordMeaningPopover";
 import { ReadingTracker } from "@/components/reading/ReadingTracker";
 
 interface VerseListProps {
@@ -26,6 +27,7 @@ export async function VerseList({
     <div className="w-full flex flex-col">
       {/* Client island for DOM-based highlighting sync */}
       <WordHighlightManager />
+      <WordMeaningPopover />
       <ReadingTracker surahNo={surahNo} />
 
       {arabicData.verses.map((verse, index) => {

@@ -1,6 +1,8 @@
 import { fetchSurahList } from "@/lib/api";
 import { SurahList } from "@/components/surah/SurahList";
 import { ReadingResume } from "@/components/reading/ReadingResume";
+import { DzikirOfTheDay } from "@/components/dzikir/DzikirOfTheDay";
+import { getDailyDzikir } from "@/lib/dzikir";
 
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -10,7 +12,7 @@ export default async function Home(props: PageProps) {
   const searchParams = await props.searchParams;
   const q = typeof searchParams.q === "string" ? searchParams.q : "";
 
-  const rawSurahs = await fetchSurahList();
+  const [rawSurahs, dailyDzikir] = await Promise.all([fetchSurahList(), getDailyDzikir(new Date())]);
   const surahs = rawSurahs.map((s, idx) => ({ ...s, surahNo: idx + 1 }));
 
   const filteredSurahs = surahs.filter((s) => {
@@ -33,6 +35,7 @@ export default async function Home(props: PageProps) {
       </div>
 
       {!q && <ReadingResume surahNames={surahs.map((s) => s.surahName)} />}
+      {!q && <DzikirOfTheDay {...dailyDzikir} />}
 
       <SurahList surahs={filteredSurahs} searchQuery={q} />
     </div>

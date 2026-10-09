@@ -5,6 +5,8 @@ interface ArabicWordProps {
   isStopMark: boolean;
   ayahNo: number;
   wordId: number | null;
+  meaning?: string;
+  transliteration?: string | null;
 }
 
 export const ArabicWord = ({
@@ -12,13 +14,17 @@ export const ArabicWord = ({
   isStopMark,
   ayahNo,
   wordId,
+  meaning,
+  transliteration,
 }: ArabicWordProps) => (
   <span
     data-ayah={ayahNo}
     data-word={wordId}
+    data-meaning={meaning}
+    data-translit={transliteration ?? undefined}
     className={`transition-all duration-200 rounded-md px-1 ${
       isStopMark ? "text-on-surface-variant/60 text-[0.8em]" : ""
-    }`}
+    } ${meaning ? "cursor-pointer" : ""}`}
   >
     {segments.map((segment, sIdx) => (
       <span

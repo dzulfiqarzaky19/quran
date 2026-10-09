@@ -1,3 +1,5 @@
+import Link from "next/link";
+import { ChevronRight, Sun } from "lucide-react";
 import { getDzikirCategories, FEATURED_DZIKIR_IDS } from "@/lib/dzikir";
 import { DzikirCategoryList } from "@/components/dzikir/DzikirCategoryList";
 
@@ -28,6 +30,19 @@ export default async function DzikirPage(props: PageProps) {
           <h2 className="mb-2 px-3 text-label-sm uppercase tracking-[0.05em] text-on-surface-variant">
             Daily
           </h2>
+          <Link
+            href="/dzikir/daily"
+            className="mb-1 flex min-h-16 items-center gap-3 rounded-xl bg-surface-container-low px-3 py-2 transition-colors hover:bg-surface-container active:scale-[0.98] active:bg-surface-container-high"
+          >
+            <Sun className="h-5 w-8 shrink-0 text-primary" aria-hidden="true" />
+            <span className="min-w-0 flex-1">
+              <span className="block text-body-lg font-semibold text-on-surface">Everyday duas</span>
+              <span className="block text-body-sm text-on-surface-variant">
+                From waking up to going to sleep
+              </span>
+            </span>
+            <ChevronRight className="h-5 w-5 shrink-0 text-on-surface-variant" aria-hidden="true" />
+          </Link>
           <DzikirCategoryList categories={featured} />
         </section>
       )}

@@ -12,6 +12,8 @@ const SECTIONS = [
   { href: '/prayer', label: 'Prayer' },
   { href: '/hijri', label: 'Hijri' },
   { href: '/hifz', label: 'Hifz' },
+  { href: '/hadith', label: 'Hadith' },
+  { href: '/zakat', label: 'Zakat' },
 ];
 
 // Only the index pages are searchable
@@ -20,13 +22,17 @@ const SEARCH: Record<string, { placeholder: string; label: string }> = {
   '/dzikir': { placeholder: 'Search topics', label: 'Search dzikir topics' },
 };
 
+// A hadith collection is searched from its own page
+const HADITH_SEARCH = { placeholder: 'Search hadith text or number', label: 'Search this collection' };
+const HADITH_COLLECTION_PATH = /^\/hadith\/[^/]+$/;
+
 export function TopBar() {
   const pathname = usePathname();
 
   // The reading view brings its own slim bar (ReadingBar)
   if (pathname.startsWith('/surah/')) return null;
 
-  const search = SEARCH[pathname];
+  const search = SEARCH[pathname] ?? (HADITH_COLLECTION_PATH.test(pathname) ? HADITH_SEARCH : undefined);
 
   return (
     <header className="sticky top-0 z-40 w-full glass">
@@ -48,6 +54,8 @@ export function TopBar() {
                   key={href}
                   href={href}
                   aria-current={active ? 'page' : undefined}
+                  // The row scrolls sideways on phones; keep the current section in view
+                  ref={active ? (el) => el?.scrollIntoView({ block: 'nearest', inline: 'nearest' }) : undefined}
                   className={`flex h-11 items-center rounded-xl px-2 text-body-sm font-semibold sm:px-3 transition-colors active:scale-[0.98] ${
                     active ? 'text-primary' : 'text-on-surface-variant hover:text-on-surface'
                   }`}

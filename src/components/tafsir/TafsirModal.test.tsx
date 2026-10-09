@@ -15,6 +15,7 @@ describe("TafsirModal SSR", () => {
     const jsx = await TafsirModal({
       surah: 1,
       ayah: 1,
+      translationId: 33,
     });
 
     render(jsx);
