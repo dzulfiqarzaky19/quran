@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { ChapterAudioResponse } from '@/lib/types';
+import { RepeatRange } from '@/lib/hifz';
 
 interface AppState {
   // Audio State
@@ -11,6 +12,8 @@ interface AppState {
   setActiveAudioWord: (word: number | null) => void;
   audioData: ChapterAudioResponse | null;
   setAudioData: (data: ChapterAudioResponse | null) => void;
+  repeat: RepeatRange | null;
+  setRepeat: (repeat: RepeatRange | null) => void;
 
   // UI State
   isSettingsOpen: boolean;
@@ -27,6 +30,8 @@ export const useAppStore = create<AppState>((set) => ({
   setActiveAudioWord: (word) => set({ activeAudioWord: word }),
   audioData: null,
   setAudioData: (data) => set({ audioData: data }),
+  repeat: null,
+  setRepeat: (repeat) => set({ repeat }),
 
   // Settings Defaults
   isSettingsOpen: false,

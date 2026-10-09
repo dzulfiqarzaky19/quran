@@ -33,6 +33,7 @@ export default async function SurahPage({
   const reciterId = Number(resolvedSearchParams.reciter) || 7;
   const translationId = Number(resolvedSearchParams.trans) || 33;
   const targetAyah = Number(resolvedSearchParams.tafsir) || 0;
+  const wordByWord = resolvedSearchParams.wbw === "1";
 
   // Fetch Surah metadata + settings resources in parallel
   const [surah, recitations, translations] = await Promise.all([
@@ -54,6 +55,7 @@ export default async function SurahPage({
           surahNo={surahId} 
           totalVerses={surah.totalAyah} 
           translationId={translationId}
+          wordByWord={wordByWord}
         />
       </Suspense>
 

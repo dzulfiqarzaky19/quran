@@ -6,6 +6,7 @@ import { useState, useMemo } from "react";
 import { RecitationResource, TranslationResource } from "@/lib/types";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { useTransition } from "react";
+import { HifzModeSwitch } from "@/components/hifz/HifzModeSwitch";
 
 interface SettingsSidebarProps {
   initialRecitations?: RecitationResource[];
@@ -48,6 +49,17 @@ export function SettingsSidebar({
     });
   };
 
+  const wordByWord = searchParams.get("wbw") === "1";
+
+  const toggleWordByWord = () => {
+    startTransition(() => {
+      const params = new URLSearchParams(searchParams.toString());
+      if (wordByWord) params.delete("wbw");
+      else params.set("wbw", "1");
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
+    });
+  };
+
   const filteredRecitations = useMemo(() => {
     return initialRecitations.filter(r => 
       r.reciter_name.toLowerCase().includes(search.toLowerCase())
@@ -83,6 +95,35 @@ export function SettingsSidebar({
             <X className="w-6 h-6" />
           </button>
         </div>
+
+        {/* Word by word */}
+        <button
+          type="button"
+          role="switch"
+          aria-checked={wordByWord}
+          onClick={toggleWordByWord}
+          className="flex items-center justify-between gap-4 border-b border-outline-variant/15 p-6 text-left transition-colors hover:bg-surface-container-high"
+        >
+          <span>
+            <span className="block text-body-md font-bold">Word by word</span>
+            <span className="block text-body-sm text-on-surface-variant">
+              Meaning and transliteration under each word
+            </span>
+          </span>
+          <span
+            className={`flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors ${
+              wordByWord ? "bg-primary" : "bg-surface-container-highest"
+            }`}
+          >
+            <span
+              className={`h-5 w-5 rounded-full bg-white transition-transform ${
+                wordByWord ? "translate-x-5" : ""
+              }`}
+            />
+          </span>
+        </button>
+
+        <HifzModeSwitch className="border-b border-outline-variant/15 p-6" />
 
         {/* Search */}
         <div className="p-6 bg-surface-container-low/50">

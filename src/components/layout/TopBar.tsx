@@ -11,6 +11,7 @@ const SECTIONS = [
   { href: '/tasbih', label: 'Tasbih' },
   { href: '/prayer', label: 'Prayer' },
   { href: '/hijri', label: 'Hijri' },
+  { href: '/hifz', label: 'Hifz' },
 ];
 
 // Only the index pages are searchable
@@ -39,7 +40,7 @@ export function TopBar() {
               </Suspense>
             </div>
           )}
-          <nav aria-label="Sections" className="flex h-12 items-center gap-1">
+          <nav aria-label="Sections" className="flex h-12 items-center overflow-x-auto sm:gap-1">
             {SECTIONS.map(({ href, label }) => {
               const active = href === '/' ? pathname === '/' : pathname.startsWith(href);
               return (
@@ -47,7 +48,7 @@ export function TopBar() {
                   key={href}
                   href={href}
                   aria-current={active ? 'page' : undefined}
-                  className={`flex h-11 items-center rounded-xl px-3 text-body-sm font-semibold transition-colors active:scale-[0.98] ${
+                  className={`flex h-11 items-center rounded-xl px-2 text-body-sm font-semibold sm:px-3 transition-colors active:scale-[0.98] ${
                     active ? 'text-primary' : 'text-on-surface-variant hover:text-on-surface'
                   }`}
                 >

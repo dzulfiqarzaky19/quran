@@ -2,6 +2,7 @@ import Link from "next/link";
 import { VerseHeaderActions } from "./VerseHeaderActions";
 import { VerseCopyButton } from "./VerseCopyButton";
 import { VerseBookmarkButton } from "./VerseBookmarkButton";
+import { VerseMemorizedButton } from "./VerseMemorizedButton";
 
 interface VerseFooterProps {
   surahNo: number;
@@ -32,6 +33,7 @@ export const VerseFooter = ({
       </Link>
       <VerseCopyButton text={copyText} />
       <VerseBookmarkButton surahNo={surahNo} ayahNo={ayahNo} />
+      <VerseMemorizedButton surahNo={surahNo} ayahNo={ayahNo} />
     </div>
   );
 };

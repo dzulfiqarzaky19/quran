@@ -7,12 +7,14 @@ interface VerseListProps {
   surahNo: number;
   totalVerses: number;
   translationId: number;
+  wordByWord?: boolean;
 }
 
 export async function VerseList({
   surahNo,
   totalVerses,
   translationId,
+  wordByWord = false,
 }: VerseListProps) {
   const [arabicData, translationData, tajweedData] = await Promise.all([
     fetchArabicContent(surahNo, totalVerses),
@@ -45,6 +47,7 @@ export async function VerseList({
               tajweedData ? tajweedData[verse.verse_number - 1] : ""
             }
             words={verse.words || []}
+            wordByWord={wordByWord}
           />
         );
       })}

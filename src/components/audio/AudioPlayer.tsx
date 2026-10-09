@@ -1,11 +1,13 @@
 "use client";
 
-import { Play, Pause, SkipBack, SkipForward } from "lucide-react";
+import { Play, Pause, Repeat, SkipBack, SkipForward } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { useAppStore } from "@/store";
 import { fetchAudioSegments } from "@/lib/api";
 import { useAudioSync } from "@/hooks/useAudioSync";
 import { useShallow } from "zustand/react/shallow";
+import { RepeatRange, nextRepeat } from "@/lib/hifz";
+import { RepeatPanel } from "./RepeatPanel";
 
 interface AudioPlayerProps {
   surahNo: number;
@@ -17,21 +19,26 @@ export function AudioPlayer({ surahNo, reciterId }: AudioPlayerProps) {
   const [isLoaded, setIsLoaded] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [duration, setDuration] = useState(0);
+  const [isRepeatOpen, setIsRepeatOpen] = useState(false);
 
   // Global state for slow-updating elements
   const {
     isPlaying,
     activeAudioAyah,
     audioData,
+    repeat,
     setIsPlaying,
     setAudioData,
+    setRepeat,
   } = useAppStore(
     useShallow((state) => ({
       isPlaying: state.isPlaying,
       activeAudioAyah: state.activeAudioAyah,
       audioData: state.audioData,
+      repeat: state.repeat,
       setIsPlaying: state.setIsPlaying,
       setAudioData: state.setAudioData,
+      setRepeat: state.setRepeat,
     })),
   );
 
@@ -53,7 +60,10 @@ export function AudioPlayer({ surahNo, reciterId }: AudioPlayerProps) {
       }
     }
     loadResources();
-  }, [surahNo, reciterId, setAudioData]);
+
+    // A range belongs to one surah's audio
+    return () => setRepeat(null);
+  }, [surahNo, reciterId, setAudioData, setRepeat]);
 
   useEffect(() => {
     if (!audioRef.current || !isLoaded) return;
@@ -88,6 +98,45 @@ export function AudioPlayer({ surahNo, reciterId }: AudioPlayerProps) {
 
   const togglePlay = () => setIsPlaying(!isPlaying);
 
+  // Called when playback passes the end of the range: start the next pass or stop
+  const loopRepeat = () => {
+    const current = useAppStore.getState().repeat;
+    if (!current) return;
+
+    const next = nextRepeat(current);
+    setRepeat(next);
+    if (!next) {
+      setIsPlaying(false);
+      return;
+    }
+    // play() again because the range may end where the audio file ends
+    if (jumpToAyah(next.from, surahNo) && useAppStore.getState().isPlaying) {
+      audioRef.current?.play().catch(console.error);
+    }
+  };
+
+  const handleTimeUpdate = () => {
+    onTimeUpdate();
+    if (!repeat || !audioRef.current || !audioData) return;
+
+    const end = audioData.audio_file.timestamps.find(
+      (ts) => ts.verse_key === `${surahNo}:${repeat.to}`,
+    );
+    if (end && audioRef.current.currentTime * 1000 >= end.timestamp_to) loopRepeat();
+  };
+
+  const handleStartRepeat = (range: RepeatRange) => {
+    if (!jumpToAyah(range.from, surahNo)) return;
+    setRepeat(range);
+    setIsPlaying(true);
+    setIsRepeatOpen(false);
+  };
+
+  const handleStopRepeat = () => {
+    setRepeat(null);
+    setIsRepeatOpen(false);
+  };
+
   const formatTime = (time: number) => {
     const mins = Math.floor(time / 60);
     const secs = Math.floor(time % 60);
@@ -98,6 +147,16 @@ export function AudioPlayer({ surahNo, reciterId }: AudioPlayerProps) {
 
   return (
     <div className="fixed bottom-0 left-0 right-0 z-40 glass pb-[env(safe-area-inset-bottom)]">
+      {isRepeatOpen && (
+        <RepeatPanel
+          totalAyah={audioData.audio_file.timestamps.length}
+          defaultAyah={activeAudioAyah ?? 1}
+          repeat={repeat}
+          onStart={handleStartRepeat}
+          onStop={handleStopRepeat}
+        />
+      )}
+
       <input
         type="range"
         aria-label="Seek"
@@ -127,10 +186,24 @@ export function AudioPlayer({ surahNo, reciterId }: AudioPlayerProps) {
             {activeAudioAyah ? `Ayah ${activeAudioAyah}` : "Recitation"}
           </p>
           <p className="text-label-sm text-on-surface-variant">
-            {formatTime(localTime)} / {formatTime(duration)}
+            {repeat
+              ? Number.isFinite(repeat.times)
+                ? `Repeat ${repeat.times - repeat.remaining + 1} of ${repeat.times}`
+                : "Repeating"
+              : `${formatTime(localTime)} / ${formatTime(duration)}`}
           </p>
         </div>
 
+        <button
+          onClick={() => setIsRepeatOpen(!isRepeatOpen)}
+          aria-label="Repeat a range"
+          aria-expanded={isRepeatOpen}
+          className={`w-11 h-11 shrink-0 rounded-xl flex items-center justify-center transition-colors ${
+            repeat ? "text-primary" : "text-on-surface-variant hover:text-primary"
+          }`}
+        >
+          <Repeat className="w-5 h-5" />
+        </button>
         <button
           onClick={handlePrev}
           disabled={!activeAudioAyah || activeAudioAyah <= 1}
@@ -165,10 +238,12 @@ export function AudioPlayer({ surahNo, reciterId }: AudioPlayerProps) {
       <audio
         ref={audioRef}
         src={audioData.audio_file.audio_url}
-        onTimeUpdate={onTimeUpdate}
+        onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={onLoadedMetadata}
         onEnded={() => {
-          if (
+          if (repeat) {
+            loopRepeat();
+          } else if (
             activeAudioAyah &&
             audioData &&
             activeAudioAyah < audioData.audio_file.timestamps.length

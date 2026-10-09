@@ -140,6 +140,8 @@ export function getTajweedWords(ayahText: string): TajweedWord[] {
 
 export const STOP_MARKS_REGEX = /[\u0615\u06D6-\u06DC\u06E2\u06E8]/;
 
+// Also covers the rub el hizb (U+06DE) and sajdah (U+06E9) signs, which stand alone
+// between words and are not counted as words by the word-level data
 export function isStopMarkOnly(text: string): boolean {
-  return /^[\s\u200c]*[\u0615\u06D6-\u06DC\u06E2\u06E8][\s\u200c]*$/.test(text);
+  return /^[\s\u200c]*[\u0615\u06D6-\u06DC\u06DE\u06E2\u06E8\u06E9][\s\u200c]*$/.test(text);
 }

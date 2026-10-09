@@ -2,6 +2,7 @@ import { VerseHeader } from "./components/VerseHeader";
 import { VerseContent } from "./components/VerseContent";
 import { VerseFooter } from "./components/VerseFooter";
 import { VerseWord } from "@/lib/types";
+import { HifzVeil } from "@/components/hifz/HifzVeil";
 
 interface VerseCardProps {
   surahNo: number;
@@ -12,6 +13,7 @@ interface VerseCardProps {
   translationId: number;
   tajweedData: string;
   words?: VerseWord[];
+  wordByWord?: boolean;
 }
 
 // One ayah fills the screen; the page snaps from ayah to ayah.
@@ -24,6 +26,7 @@ export const VerseCard = ({
   translationId,
   tajweedData,
   words,
+  wordByWord = false,
 }: VerseCardProps) => {
   return (
     <section
@@ -32,14 +35,17 @@ export const VerseCard = ({
     >
       <VerseHeader ayahNo={ayahNo} totalAyah={totalAyah} />
 
-      <VerseContent
-        ayahNo={ayahNo}
-        arabic={arabic}
-        translation={translation}
-        translationId={translationId}
-        tajweedData={tajweedData}
-        words={words}
-      />
+      <HifzVeil>
+        <VerseContent
+          ayahNo={ayahNo}
+          arabic={arabic}
+          translation={translation}
+          translationId={translationId}
+          tajweedData={tajweedData}
+          words={words}
+          wordByWord={wordByWord}
+        />
+      </HifzVeil>
 
       <VerseFooter
         surahNo={surahNo}
